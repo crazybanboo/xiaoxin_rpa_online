@@ -1,0 +1,37 @@
+# Task ID: 1
+# Title: 基础架构搭建和项目初始化
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: 搭建FastAPI后端项目和Vue 3前端项目的基础架构，配置开发环境
+# Details:
+1. 创建FastAPI项目结构，配置虚拟环境和依赖包(fastapi, uvicorn, sqlalchemy, python-jose, httpx)。2. 初始化Vue 3 + TypeScript项目，安装Element Plus、Pinia、Axios、Vite等依赖。3. 配置项目的基本目录结构和配置文件。4. 设置Docker开发环境配置文件。
+
+# Test Strategy:
+验证项目能够正常启动，FastAPI服务能够返回健康检查接口，Vue开发服务器能够正常运行
+
+# Subtasks:
+## 1. 后端FastAPI项目初始化 [pending]
+### Dependencies: None
+### Description: 创建FastAPI后端项目的基础架构和依赖配置
+### Details:
+1. 创建项目目录结构(app/, tests/, requirements.txt)。2. 配置Python虚拟环境。3. 安装核心依赖包：fastapi、uvicorn、sqlalchemy、python-jose[cryptography]、httpx、python-multipart、bcrypt。4. 创建主应用文件main.py和基础路由。5. 配置CORS中间件。6. 创建健康检查接口(/health)。
+
+## 2. 前端Vue3项目初始化 [pending]
+### Dependencies: None
+### Description: 初始化Vue3 + TypeScript前端项目和UI框架配置
+### Details:
+1. 使用Vite创建Vue3 + TypeScript项目。2. 安装UI和功能依赖：Element Plus、@element-plus/icons-vue、Pinia、Vue Router、Axios。3. 配置Vite构建工具和开发服务器。4. 设置TypeScript配置文件。5. 创建基础项目结构(views/, components/, stores/, utils/)。6. 配置Element Plus自动导入。
+
+## 3. 项目配置管理 [pending]
+### Dependencies: 1.1, 1.2
+### Description: 配置项目的环境变量、配置文件和开发工具
+### Details:
+1. 创建后端环境配置文件(.env, config.py)，包含数据库连接、JWT密钥、CORS设置。2. 配置前端环境变量(.env.development, .env.production)，设置API基础URL。3. 创建ESLint和Prettier配置文件。4. 配置Git忽略文件(.gitignore)。5. 创建项目README.md文件。6. 设置开发脚本和启动命令。
+
+## 4. Docker开发环境配置 [pending]
+### Dependencies: 1.1, 1.2
+### Description: 配置Docker开发环境和容器编排文件
+### Details:
+1. 创建后端Dockerfile.dev，配置Python运行环境和依赖安装。2. 创建前端Dockerfile.dev，配置Node.js环境。3. 编写docker-compose.dev.yml文件，定义后端、前端和数据库服务。4. 配置卷映射实现热重载开发。5. 创建.dockerignore文件优化构建。6. 编写开发环境启动脚本。
+

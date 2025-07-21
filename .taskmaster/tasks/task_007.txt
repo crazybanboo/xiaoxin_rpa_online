@@ -1,0 +1,43 @@
+# Task ID: 7
+# Title: 远程控制功能实现
+# Status: pending
+# Dependencies: 5, 6
+# Priority: medium
+# Description: 实现远程控制RPA客户端的启用/禁用、重启等操作功能
+# Details:
+1. 开发远程控制API(/api/clients/{client_id}/control)支持enable、disable、restart操作。2. 实现命令队列机制，在心跳响应中下发控制命令。3. 在客户端实现命令解析和执行逻辑。4. 前端添加控制按钮和批量操作功能。5. 实现操作结果反馈和状态同步。
+
+# Test Strategy:
+测试单个客户端控制功能，验证批量操作的正确性，确保命令执行结果能够正确反馈
+
+# Subtasks:
+## 1. 远程控制API接口开发 [pending]
+### Dependencies: None
+### Description: 开发服务端远程控制API，支持启用、禁用、重启等操作命令
+### Details:
+实现 /api/clients/{client_id}/control 接口，支持 enable、disable、restart 三种操作类型。添加请求参数验证、权限检查和操作日志记录功能。
+
+## 2. 命令队列机制实现 [pending]
+### Dependencies: 7.1
+### Description: 实现基于Redis或内存的命令队列系统，确保控制命令的可靠传递
+### Details:
+设计命令队列数据结构，实现命令入队、出队逻辑。在心跳响应中集成命令下发机制，支持命令优先级和超时处理。
+
+## 3. 客户端命令执行逻辑 [pending]
+### Dependencies: 7.2
+### Description: 在客户端实现接收和执行远程控制命令的核心逻辑
+### Details:
+解析心跳响应中的控制命令，实现启用/禁用RPA功能、客户端重启等操作。添加命令执行状态上报和异常处理机制。
+
+## 4. 前端控制界面开发 [pending]
+### Dependencies: 7.1
+### Description: 开发管理后台的远程控制界面，支持单个和批量操作
+### Details:
+在客户端列表页面添加控制按钮（启用/禁用/重启），实现批量选择和批量操作功能。添加操作确认弹窗和进度显示。
+
+## 5. 操作反馈和状态同步机制 [pending]
+### Dependencies: 7.3, 7.4
+### Description: 实现控制操作结果的实时反馈和客户端状态同步
+### Details:
+建立操作结果反馈通道，实时更新前端显示的操作状态。实现客户端状态同步，确保控制面板显示的状态与实际状态一致。
+

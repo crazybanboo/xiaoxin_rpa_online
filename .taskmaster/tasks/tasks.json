@@ -1,0 +1,696 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "基础架构搭建和项目初始化",
+        "description": "搭建FastAPI后端项目和Vue 3前端项目的基础架构，配置开发环境",
+        "details": "1. 创建FastAPI项目结构，配置虚拟环境和依赖包(fastapi, uvicorn, sqlalchemy, python-jose, httpx)。2. 初始化Vue 3 + TypeScript项目，安装Element Plus、Pinia、Axios、Vite等依赖。3. 配置项目的基本目录结构和配置文件。4. 设置Docker开发环境配置文件。",
+        "testStrategy": "验证项目能够正常启动，FastAPI服务能够返回健康检查接口，Vue开发服务器能够正常运行",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "后端FastAPI项目初始化",
+            "description": "创建FastAPI后端项目的基础架构和依赖配置",
+            "dependencies": [],
+            "details": "1. 创建项目目录结构(app/, tests/, requirements.txt)。2. 配置Python虚拟环境。3. 安装核心依赖包：fastapi、uvicorn、sqlalchemy、python-jose[cryptography]、httpx、python-multipart、bcrypt。4. 创建主应用文件main.py和基础路由。5. 配置CORS中间件。6. 创建健康检查接口(/health)。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "前端Vue3项目初始化",
+            "description": "初始化Vue3 + TypeScript前端项目和UI框架配置",
+            "dependencies": [],
+            "details": "1. 使用Vite创建Vue3 + TypeScript项目。2. 安装UI和功能依赖：Element Plus、@element-plus/icons-vue、Pinia、Vue Router、Axios。3. 配置Vite构建工具和开发服务器。4. 设置TypeScript配置文件。5. 创建基础项目结构(views/, components/, stores/, utils/)。6. 配置Element Plus自动导入。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "项目配置管理",
+            "description": "配置项目的环境变量、配置文件和开发工具",
+            "dependencies": [
+              "1.1",
+              "1.2"
+            ],
+            "details": "1. 创建后端环境配置文件(.env, config.py)，包含数据库连接、JWT密钥、CORS设置。2. 配置前端环境变量(.env.development, .env.production)，设置API基础URL。3. 创建ESLint和Prettier配置文件。4. 配置Git忽略文件(.gitignore)。5. 创建项目README.md文件。6. 设置开发脚本和启动命令。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Docker开发环境配置",
+            "description": "配置Docker开发环境和容器编排文件",
+            "dependencies": [
+              "1.1",
+              "1.2"
+            ],
+            "details": "1. 创建后端Dockerfile.dev，配置Python运行环境和依赖安装。2. 创建前端Dockerfile.dev，配置Node.js环境。3. 编写docker-compose.dev.yml文件，定义后端、前端和数据库服务。4. 配置卷映射实现热重载开发。5. 创建.dockerignore文件优化构建。6. 编写开发环境启动脚本。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "数据库模型和数据层设计",
+        "description": "使用SQLAlchemy设计和实现核心数据模型，包括管理员、客户端、升级包和升级任务表",
+        "details": "1. 设计SQLAlchemy ORM模型：admins表(用户认证)、clients表(客户端信息)、upgrade_packages表(升级包管理)、upgrade_tasks表(升级任务)。2. 配置SQLite数据库连接。3. 实现数据库初始化脚本和迁移机制。4. 创建基础的数据访问层(CRUD操作)。",
+        "testStrategy": "编写单元测试验证每个模型的CRUD操作，测试数据库连接和表创建功能",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "数据模型设计",
+            "description": "设计管理员、客户端、升级包和升级任务的数据模型结构，定义表字段和关联关系",
+            "dependencies": [],
+            "details": "设计admins表(id, username, password_hash, email, created_at)、clients表(id, name, ip_address, version, status, last_heartbeat)、upgrade_packages表(id, name, version, file_path, file_size, created_at)、upgrade_tasks表(id, client_id, package_id, status, created_at, completed_at)。定义表之间的外键关系和索引策略。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "SQLAlchemy ORM实现",
+            "description": "基于数据模型设计实现SQLAlchemy ORM模型类和数据表映射",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "创建models.py文件，实现Admin、Client、UpgradePackage、UpgradeTask等模型类。配置SQLAlchemy的Column、关系映射、约束条件。实现模型类的__repr__方法和必要的属性验证。设置合适的数据类型和长度限制。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "数据库连接配置",
+            "description": "配置SQLite数据库连接和SQLAlchemy引擎，实现数据库会话管理",
+            "dependencies": [
+              "2.2"
+            ],
+            "details": "创建database.py配置文件，设置SQLite数据库连接字符串和引擎参数。实现数据库会话工厂和上下文管理器。配置连接池和事务管理。添加数据库健康检查功能，确保连接稳定性。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "迁移机制实现",
+            "description": "实现数据库表创建和数据迁移机制，支持版本升级时的数据结构变更",
+            "dependencies": [
+              "2.3"
+            ],
+            "details": "创建数据库初始化脚本，实现自动创建所有表结构。设计简单的迁移系统，支持数据库版本管理。实现数据库备份和恢复功能。添加初始化数据的seed脚本，包括默认管理员账户创建。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "数据访问层CRUD操作",
+            "description": "为每个数据模型实现基础的增删改查操作接口",
+            "dependencies": [
+              "2.4"
+            ],
+            "details": "创建crud.py文件，实现每个模型的create、read、update、delete操作。包括分页查询、条件筛选、批量操作等功能。实现数据验证和异常处理。为升级任务添加状态更新和进度跟踪功能。优化查询性能，添加必要的数据库索引。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "JWT认证系统实现",
+        "description": "实现基于JWT的用户认证系统，包括登录、token验证和权限管理",
+        "details": "1. 使用python-jose实现JWT token生成和验证。2. 创建登录API接口(/api/auth/login)，实现密码hash验证。3. 实现JWT中间件进行请求认证。4. 在前端实现登录页面，集成token存储和自动刷新机制。5. 配置axios请求拦截器自动添加Authorization header。",
+        "testStrategy": "测试登录接口功能，验证token生成和验证流程，测试权限中间件拦截未授权请求",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "JWT工具类实现",
+            "description": "使用python-jose实现JWT token的生成、验证和解析功能",
+            "dependencies": [],
+            "details": "1. 安装并配置python-jose库。2. 创建JWT工具类，实现token生成方法，包括设置过期时间、用户信息编码。3. 实现token验证和解析方法，处理过期、无效token的异常情况。4. 配置JWT密钥和算法参数。5. 添加token刷新机制支持。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "登录API接口开发",
+            "description": "创建用户登录API端点，实现密码验证和token颁发",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "1. 创建/api/auth/login POST接口。2. 实现用户名密码验证逻辑，与数据库中的管理员信息比对。3. 使用bcrypt进行密码hash验证。4. 登录成功后生成并返回JWT token。5. 添加登录失败次数限制和安全措施。6. 实现登录日志记录功能。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "JWT认证中间件实现",
+            "description": "开发FastAPI中间件，自动验证请求中的JWT token",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "1. 创建JWT认证中间件类。2. 实现从请求头Authorization中提取token的逻辑。3. 集成JWT工具类进行token验证。4. 处理token过期、无效等异常情况，返回相应HTTP状态码。5. 实现路由白名单机制，排除不需要认证的接口。6. 将验证通过的用户信息注入到请求上下文中。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "前端登录页面开发",
+            "description": "使用Vue 3和Element Plus创建用户登录界面",
+            "dependencies": [],
+            "details": "1. 创建登录页面组件，使用Element Plus表单组件。2. 实现用户名密码输入验证，包括格式检查和必填验证。3. 集成axios调用登录API接口。4. 添加登录状态反馈，包括loading状态和错误提示。5. 实现登录成功后的页面跳转逻辑。6. 添加记住登录状态的复选框功能。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Token管理机制实现",
+            "description": "实现前端token存储、自动刷新和axios请求拦截器配置",
+            "dependencies": [
+              "3.2",
+              "3.4"
+            ],
+            "details": "1. 使用localStorage或sessionStorage存储JWT token。2. 配置axios请求拦截器，自动在请求头中添加Authorization bearer token。3. 实现axios响应拦截器，处理401未授权状态。4. 开发token自动刷新机制，在token即将过期时自动续期。5. 实现用户登出功能，清除本地存储的token。6. 添加token过期后自动跳转到登录页的逻辑。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "客户端心跳监控系统",
+        "description": "实现客户端心跳机制和状态监控功能，包括心跳接收、状态更新和实时通信",
+        "details": "1. 开发心跳接收API(/api/heartbeat)，处理客户端状态信息。2. 实现WebSocket连接用于实时状态推送。3. 创建后台任务监控客户端在线状态，标记离线客户端。4. 在前端实现WebSocket连接和实时状态更新。5. 设计客户端状态显示UI组件。",
+        "testStrategy": "模拟客户端发送心跳请求，验证状态更新机制，测试WebSocket实时通信功能",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "心跳API接口开发",
+            "description": "开发客户端心跳接收API接口，处理心跳数据验证和状态更新",
+            "dependencies": [],
+            "details": "实现/api/heartbeat POST接口，接收客户端ID、时间戳、状态信息等参数。验证客户端合法性，更新数据库中客户端的最后心跳时间和状态。设计心跳数据格式和响应结构。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "WebSocket实时通信实现",
+            "description": "实现WebSocket服务器端，提供实时状态推送功能",
+            "dependencies": [],
+            "details": "使用FastAPI WebSocket支持创建WebSocket端点。实现连接管理、客户端状态变化事件推送。处理连接建立、断开、重连逻辑。设计实时消息格式和事件类型。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "后台监控任务开发",
+            "description": "创建后台定时任务，监控客户端在线状态并标记离线客户端",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "使用APScheduler或类似工具创建定时任务。检查客户端心跳超时情况，标记离线状态。触发WebSocket状态变化通知。配置监控间隔和超时阈值参数。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "客户端状态管理",
+            "description": "实现前端客户端状态数据管理，使用Pinia进行状态存储",
+            "dependencies": [],
+            "details": "创建客户端状态Store，管理在线/离线状态列表。实现状态更新、筛选、排序功能。处理WebSocket消息接收和状态同步。设计状态数据结构和更新逻辑。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "前端WebSocket集成",
+            "description": "在前端实现WebSocket连接管理，处理断线重连和消息处理",
+            "dependencies": [
+              "4.2",
+              "4.4"
+            ],
+            "details": "创建WebSocket连接类，处理连接建立和断开。实现自动重连机制和连接状态管理。解析服务器推送的状态变化消息，更新本地状态。处理连接异常和错误情况。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "状态UI组件开发",
+            "description": "开发客户端状态显示界面组件，实现实时状态展示功能",
+            "dependencies": [
+              "4.4",
+              "4.5"
+            ],
+            "details": "使用Element Plus创建客户端状态列表组件。显示客户端ID、在线状态、最后心跳时间等信息。实现状态筛选（在线/离线/全部）和搜索功能。添加状态指示器和实时更新动画效果。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "RPA客户端通信模块改造",
+        "description": "为xiaoxin_rpa_pro客户端添加HTTP通信功能，实现与监控服务的交互",
+        "details": "1. 在RPA客户端中集成requests/httpx库进行HTTP通信。2. 实现心跳发送模块，定期向监控服务发送状态信息。3. 创建远程命令接收和执行机制。4. 实现客户端唯一标识生成和管理。5. 添加配置文件管理监控服务地址。",
+        "testStrategy": "验证客户端能够成功发送心跳，测试远程命令接收和执行功能，确保客户端状态同步正确",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "HTTP通信模块集成",
+            "description": "在RPA客户端中集成HTTP通信库，实现与监控服务的基础网络连接",
+            "dependencies": [],
+            "details": "1. 在xiaoxin_rpa_pro项目中安装和配置requests或httpx库。2. 创建HTTP客户端封装类，处理请求超时、重试和异常。3. 实现基础的GET/POST请求方法。4. 添加请求日志记录功能。5. 配置SSL证书验证和代理支持。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "心跳发送机制实现",
+            "description": "开发定期心跳发送功能，向监控服务报告客户端运行状态",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "1. 创建心跳数据结构，包含客户端ID、状态、时间戳、系统信息。2. 实现定时器机制，定期发送心跳请求。3. 添加心跳发送失败的重试逻辑。4. 实现心跳响应处理，更新本地状态。5. 支持动态调整心跳间隔。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "远程命令处理模块",
+            "description": "实现远程命令接收、解析和执行机制",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "1. 设计远程命令协议格式和命令类型定义。2. 实现命令轮询或长连接机制获取远程命令。3. 创建命令解析器，支持升级、重启、配置更新等命令。4. 实现命令执行器，安全执行远程命令。5. 添加命令执行结果反馈机制。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "客户端配置管理",
+            "description": "实现客户端唯一标识生成和配置文件管理功能",
+            "dependencies": [],
+            "details": "1. 实现客户端唯一ID生成算法，基于硬件信息和随机数。2. 创建配置文件管理模块，支持监控服务地址、心跳间隔等配置。3. 实现配置文件的读取、更新和验证功能。4. 添加配置变更的热重载机制。5. 实现客户端注册到监控服务的初始化流程。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "HTTP通信模块集成",
+            "description": "在xiaoxin_rpa_pro客户端中集成HTTP通信库，实现与监控服务的基础网络连接功能",
+            "dependencies": [],
+            "details": "1. 在xiaoxin_rpa_pro项目中安装requests或httpx库。2. 创建HTTPClient类封装HTTP请求功能。3. 实现基础的GET/POST请求方法。4. 配置请求超时和重试机制。5. 添加错误处理和日志记录功能。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "心跳发送机制实现",
+            "description": "实现客户端定期向监控服务发送心跳信息的机制，确保客户端状态实时同步",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "1. 创建心跳发送模块，定期向/api/heartbeat接口发送客户端状态。2. 实现客户端唯一标识生成和管理。3. 收集客户端系统信息(CPU、内存、磁盘使用率等)。4. 配置心跳发送间隔和失败重试机制。5. 实现后台线程或定时任务执行心跳发送。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "远程命令处理模块",
+            "description": "实现接收和处理监控服务下发的远程命令功能，支持升级、重启等操作",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "1. 创建命令接收模块，定期轮询或实时接收服务端命令。2. 实现命令解析器，支持升级、重启、配置更新等命令类型。3. 开发命令执行器，安全执行各种系统级操作。4. 实现命令执行结果反馈机制。5. 添加命令执行日志和安全验证。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "客户端配置管理",
+            "description": "实现客户端配置文件管理功能，支持动态配置监控服务地址和通信参数",
+            "dependencies": [],
+            "details": "1. 创建配置文件(config.json/ini)管理监控服务地址、端口等参数。2. 实现配置文件读取和更新功能。3. 支持环境变量覆盖配置文件设置。4. 实现配置热更新机制，无需重启即可应用新配置。5. 添加配置验证和默认值处理。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "客户端监控界面开发",
+        "description": "开发Vue前端客户端监控页面，显示客户端列表、状态和基本信息",
+        "details": "1. 使用Element Plus创建客户端列表表格组件。2. 实现状态指示器显示在线/离线、工作状态。3. 添加实时数据更新功能，集成WebSocket状态推送。4. 实现客户端信息详情查看功能。5. 优化界面响应式设计和用户体验。",
+        "testStrategy": "测试客户端列表显示功能，验证实时状态更新，检查响应式布局在不同设备上的显示效果",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "客户端列表组件开发",
+            "description": "使用Element Plus创建客户端列表表格组件，显示客户端基本信息",
+            "dependencies": [],
+            "details": "1. 创建ClientList.vue组件，使用el-table展示客户端数据。2. 设计表格列：客户端ID、名称、IP地址、操作系统、最后心跳时间等。3. 实现分页功能和搜索过滤。4. 添加客户端详情查看功能。5. 配置表格样式和交互效果。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "状态指示器实现",
+            "description": "开发状态指示器组件，显示客户端在线/离线和工作状态",
+            "dependencies": [
+              "6.1"
+            ],
+            "details": "1. 创建StatusIndicator.vue组件，使用颜色和图标表示状态。2. 实现在线/离线状态判断逻辑（基于心跳时间）。3. 添加工作状态显示（空闲、执行任务、升级中等）。4. 实现状态颜色配置（绿色在线、红色离线、黄色警告）。5. 添加状态变化动画效果。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "实时数据更新集成",
+            "description": "集成WebSocket实现客户端状态和数据的实时更新",
+            "dependencies": [
+              "6.2"
+            ],
+            "details": "1. 在监控页面中集成WebSocket客户端连接。2. 监听客户端状态变化事件，实时更新表格数据。3. 实现断线重连机制和错误处理。4. 添加实时通知功能（新客户端上线、离线提醒）。5. 优化数据更新性能，避免频繁重渲染。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "响应式UI优化",
+            "description": "优化监控界面的响应式设计和用户体验",
+            "dependencies": [
+              "6.3"
+            ],
+            "details": "1. 实现移动端适配，调整表格在小屏设备上的显示方式。2. 优化页面加载性能，添加骨架屏和懒加载。3. 实现主题切换功能（明暗模式）。4. 添加用户友好的加载状态和错误提示。5. 优化交互体验，添加快捷键和右键菜单功能。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "远程控制功能实现",
+        "description": "实现远程控制RPA客户端的启用/禁用、重启等操作功能",
+        "details": "1. 开发远程控制API(/api/clients/{client_id}/control)支持enable、disable、restart操作。2. 实现命令队列机制，在心跳响应中下发控制命令。3. 在客户端实现命令解析和执行逻辑。4. 前端添加控制按钮和批量操作功能。5. 实现操作结果反馈和状态同步。",
+        "testStrategy": "测试单个客户端控制功能，验证批量操作的正确性，确保命令执行结果能够正确反馈",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "远程控制API接口开发",
+            "description": "开发服务端远程控制API，支持启用、禁用、重启等操作命令",
+            "dependencies": [],
+            "details": "实现 /api/clients/{client_id}/control 接口，支持 enable、disable、restart 三种操作类型。添加请求参数验证、权限检查和操作日志记录功能。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "命令队列机制实现",
+            "description": "实现基于Redis或内存的命令队列系统，确保控制命令的可靠传递",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "设计命令队列数据结构，实现命令入队、出队逻辑。在心跳响应中集成命令下发机制，支持命令优先级和超时处理。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "客户端命令执行逻辑",
+            "description": "在客户端实现接收和执行远程控制命令的核心逻辑",
+            "dependencies": [
+              "7.2"
+            ],
+            "details": "解析心跳响应中的控制命令，实现启用/禁用RPA功能、客户端重启等操作。添加命令执行状态上报和异常处理机制。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "前端控制界面开发",
+            "description": "开发管理后台的远程控制界面，支持单个和批量操作",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "在客户端列表页面添加控制按钮（启用/禁用/重启），实现批量选择和批量操作功能。添加操作确认弹窗和进度显示。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "操作反馈和状态同步机制",
+            "description": "实现控制操作结果的实时反馈和客户端状态同步",
+            "dependencies": [
+              "7.3",
+              "7.4"
+            ],
+            "details": "建立操作结果反馈通道，实时更新前端显示的操作状态。实现客户端状态同步，确保控制面板显示的状态与实际状态一致。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "升级包管理系统",
+        "description": "实现升级包的上传、存储、版本管理功能",
+        "details": "1. 开发升级包上传API(/api/upgrade/packages)，支持多部分文件上传。2. 实现文件存储管理，包括版本号验证和文件完整性检查。3. 创建升级包列表管理界面，支持查看、删除操作。4. 实现升级包下载接口供客户端使用。5. 添加升级包元数据管理(版本、大小、描述等)。",
+        "testStrategy": "测试文件上传功能，验证版本管理逻辑，确保文件存储和下载的完整性",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "开发升级包上传API",
+            "description": "实现多部分文件上传接口，支持大文件分片上传功能",
+            "dependencies": [],
+            "details": "创建/api/upgrade/packages上传接口，支持multipart/form-data格式，实现文件分片上传、断点续传功能，添加上传进度跟踪和错误处理机制",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "实现版本管理逻辑",
+            "description": "开发升级包版本号验证和管理系统",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "实现版本号格式验证(如1.0.0)、版本比较算法、版本冲突检测、版本历史记录管理，确保版本号唯一性和递增性",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "文件存储管理实现",
+            "description": "构建升级包文件存储系统和完整性验证机制",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "设计文件存储目录结构、实现文件完整性校验(MD5/SHA256)、文件去重机制、存储空间管理、过期文件清理功能",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "升级包管理界面开发",
+            "description": "创建前端升级包管理页面，提供可视化操作界面",
+            "dependencies": [
+              "8.3"
+            ],
+            "details": "开发升级包列表展示页面、支持查看包详情、删除操作、搜索过滤功能、上传进度显示、批量操作功能，集成Element Plus组件",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "下载接口实现",
+            "description": "开发客户端升级包下载API和断点续传功能",
+            "dependencies": [
+              "8.4"
+            ],
+            "details": "创建/api/upgrade/download接口，支持Range请求实现断点续传、下载权限验证、下载统计记录、并发下载控制和下载速度限制功能",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "自动升级功能开发",
+        "description": "实现客户端自动升级机制，支持用户确认和静默强制两种升级模式",
+        "details": "1. 开发升级任务创建API(/api/upgrade/tasks)，支持批量升级任务。2. 实现客户端升级逻辑：下载、验证、安装、重启流程。3. 创建两种升级模式：用户确认(弹窗)和静默强制升级。4. 前端实现升级管理界面，显示升级进度和结果。5. 添加升级失败回滚机制。",
+        "testStrategy": "测试升级任务创建和执行流程，验证两种升级模式的正确性，确保升级失败时的回滚机制",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "升级任务API开发",
+            "description": "开发升级任务创建、查询、管理等核心API接口",
+            "dependencies": [],
+            "details": "实现/api/upgrade/tasks相关接口，包括创建升级任务、批量分发任务、查询任务状态、取消任务等功能。支持按客户端分组、版本筛选等批量操作。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "客户端升级流程实现",
+            "description": "实现客户端侧的完整升级执行流程",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "开发客户端升级逻辑：下载升级包、文件校验、备份当前版本、安装新版本、重启应用等完整流程。包含升级进度上报和异常处理机制。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "升级模式管理",
+            "description": "实现用户确认和静默强制两种升级模式的逻辑",
+            "dependencies": [
+              "9.2"
+            ],
+            "details": "开发用户确认升级模式（弹窗提示用户选择）和静默强制升级模式（后台自动执行）。包含模式配置、用户交互界面和强制升级的策略控制。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "前端升级管理界面开发",
+            "description": "创建管理端的升级任务管理和监控界面",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "开发升级任务创建界面、客户端选择功能、升级进度实时显示、任务状态管理等前端页面。支持批量操作和详细的升级结果展示。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "升级进度监控",
+            "description": "实现升级过程的实时进度监控和状态反馈",
+            "dependencies": [
+              "9.2",
+              "9.4"
+            ],
+            "details": "建立客户端与服务端的升级进度通信机制，实时监控下载、安装、重启等各阶段进度。提供WebSocket实时推送和轮询查询两种方式。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "失败回滚机制",
+            "description": "实现升级失败时的自动回滚和恢复功能",
+            "dependencies": [
+              "9.3",
+              "9.5"
+            ],
+            "details": "开发升级失败检测机制、版本备份恢复、配置文件还原等回滚功能。包含失败原因分析、自动重试策略和手动回滚操作界面。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Docker容器化和Sealos部署配置",
+        "description": "配置Docker容器化部署和Sealos平台的部署文件，实现生产环境部署",
+        "details": "1. 编写后端FastAPI应用的Dockerfile，配置生产环境运行参数。2. 创建前端Nginx + Vue构建产物的Dockerfile。3. 编写Sealos部署YAML配置文件，包括Deployment、Service、PersistentVolume。4. 配置数据持久化存储(SQLite数据库、升级包文件)。5. 设置环境变量和配置文件管理。",
+        "testStrategy": "验证Docker镜像构建和运行，测试Sealos部署配置，确保持久化存储正常工作，进行完整系统集成测试",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "后端FastAPI应用Dockerfile配置",
+            "description": "创建后端应用的Dockerfile，配置Python环境、依赖安装和生产环境运行参数",
+            "dependencies": [],
+            "details": "1. 基于Python官方镜像创建Dockerfile。2. 安装项目依赖包requirements.txt。3. 配置工作目录和文件复制。4. 设置环境变量和启动命令。5. 优化镜像大小和构建缓存。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "前端Nginx+Vue构建Dockerfile配置",
+            "description": "创建前端应用的多阶段Dockerfile，包括Vue构建和Nginx部署配置",
+            "dependencies": [],
+            "details": "1. 使用Node.js镜像构建Vue应用。2. 配置Nginx镜像部署构建产物。3. 编写Nginx配置文件处理路由。4. 设置多阶段构建优化镜像大小。5. 配置静态资源缓存策略。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Sealos平台部署YAML配置",
+            "description": "编写Sealos部署配置文件，包括Deployment、Service和Ingress资源配置",
+            "dependencies": [
+              "10.1",
+              "10.2"
+            ],
+            "details": "1. 创建后端和前端的Deployment配置。2. 配置Service暴露应用端口。3. 设置Ingress路由规则。4. 配置环境变量和ConfigMap。5. 设置资源限制和健康检查。",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "持久化存储和数据管理配置",
+            "description": "配置SQLite数据库和升级包文件的持久化存储，确保数据持久性和备份策略",
+            "dependencies": [
+              "10.3"
+            ],
+            "details": "1. 配置PersistentVolume和PersistentVolumeClaim。2. 设置数据库文件存储挂载点。3. 配置升级包文件存储目录。4. 实现数据备份和恢复机制。5. 测试存储卷的数据持久性。",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-21T15:07:28.400Z",
+      "updated": "2025-07-21T15:07:28.400Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
