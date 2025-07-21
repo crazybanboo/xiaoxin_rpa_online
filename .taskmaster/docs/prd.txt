@@ -1,0 +1,371 @@
+# Xiaoxin RPA Pro 后台监控网站 PRD
+
+## 1. 项目概述
+
+### 1.1 项目背景
+Xiaoxin RPA Pro 是一个基于Python的机器人流程自动化软件，支持图像识别、鼠标操作、窗口管理等功能。需要一个简洁的后台监控网站来实现对RPA客户端的基本监控和远程控制。
+
+### 1.2 项目目标
+开发一个简洁的web端后台监控系统，实现对xiaoxin_rpa_pro客户端的基础监控和远程控制功能。
+
+### 1.3 项目范围
+- 后台监控网站（Web端）
+- RPA客户端改造（添加通信功能）
+- 监控服务端（API服务）
+- 在线升级系统
+
+## 2. 用户角色和需求
+
+### 2.1 主要用户
+- **系统管理员**：负责RPA客户端的监控和管理
+
+### 2.2 用户需求
+- 查看所有RPA客户端的基本状态
+- 远程控制RPA业务开启/关闭
+- 管理RPA客户端升级
+
+## 3. 功能需求
+
+### 3.1 核心功能模块
+
+#### 3.1.1 用户认证模块
+**功能描述**: 简单的登录认证
+**具体功能**:
+- 账号密码登录
+- 登录状态保持
+- 退出登录
+
+#### 3.1.2 客户端监控模块
+**功能描述**: 显示RPA客户端的基本信息
+**具体功能**:
+- 客户端列表显示（IP地址、版本号、在线状态、工作状态）
+- 在线/离线状态实时更新
+- 工作状态显示（工作中/禁用中）
+- 心跳监控（最后心跳时间）
+
+#### 3.1.3 远程控制模块
+**功能描述**: 远程控制RPA客户端的业务执行
+**具体功能**:
+- 远程启用/禁用RPA业务
+- 批量操作（选中多个客户端统一操作）
+- 远程重启客户端程序
+
+#### 3.1.4 升级管理模块
+**功能描述**: 管理RPA客户端的版本升级
+**具体功能**:
+- 升级包管理（上传、版本管理）
+- 升级策略配置：
+  - 用户同意升级（客户端弹窗确认）
+  - 静默强制升级（后台自动升级）
+- 升级进度监控
+- 升级结果查看
+
+### 3.2 系统架构设计
+
+#### 3.2.1 整体架构
+```
+[Web前端] → [API服务] → [数据库]
+              ↓
+[RPA客户端1] ← → [心跳服务]
+[RPA客户端2]
+[RPA客户端N]
+```
+
+#### 3.2.2 通信协议
+- **HTTP/WebSocket**: Web前端与后台API通信
+- **HTTP**: RPA客户端与监控服务通信（心跳和命令）
+
+### 3.3 技术需求
+
+#### 3.3.1 后端技术栈（Python生态）
+- **框架**: FastAPI
+- **数据库**: SQLite（简单部署）
+- **ORM**: SQLAlchemy
+- **认证**: JWT Token (python-jose)
+- **HTTP客户端**: httpx/requests
+- **异步任务**: FastAPI BackgroundTasks
+- **WebSocket**: FastAPI WebSocket支持
+
+#### 3.3.2 前端技术栈
+- **框架**: Vue 3 + TypeScript
+- **UI库**: Element Plus 或 Ant Design Vue
+- **状态管理**: Pinia
+- **HTTP客户端**: Axios
+- **构建工具**: Vite
+
+#### 3.3.3 部署技术栈
+- **容器化**: Docker
+- **部署平台**: Sealos
+- **反向代理**: Nginx（容器内）
+- **文件存储**: 容器卷挂载
+
+#### 3.3.4 RPA客户端改造
+- 添加HTTP客户端模块
+- 实现心跳发送机制
+- 添加远程控制接口
+- 实现自动升级功能
+
+### 3.4 Sealos部署架构
+
+#### 3.4.1 应用组件
+- **后端服务**: FastAPI应用容器
+- **数据库**: SQLite文件存储（持久卷）
+- **前端服务**: Nginx + Vue构建产物
+
+#### 3.4.2 Sealos配置
+```yaml
+# 后端服务
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rpa-monitor-backend
+
+# 前端服务  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rpa-monitor-frontend
+```
+
+#### 3.4.3 数据持久化
+- SQLite数据库文件挂载到持久卷
+- 升级包文件存储到持久卷
+- 日志文件持久化存储
+
+## 4. 数据模型设计
+
+### 4.1 核心数据表
+
+#### 4.1.1 管理员表 (admins)
+```sql
+- id: 主键
+- username: 用户名
+- password_hash: 密码哈希
+- created_at: 创建时间
+```
+
+#### 4.1.2 客户端信息表 (clients)
+```sql
+- id: 主键
+- client_id: 客户端唯一标识
+- ip_address: IP地址
+- version: 版本号
+- status: 状态（online/offline）
+- work_status: 工作状态（enabled/disabled）
+- last_heartbeat: 最后心跳时间
+- created_at: 创建时间
+- updated_at: 更新时间
+```
+
+#### 4.1.3 升级包表 (upgrade_packages)
+```sql
+- id: 主键
+- version: 版本号
+- file_path: 文件路径
+- file_size: 文件大小
+- description: 更新说明
+- created_at: 创建时间
+```
+
+#### 4.1.4 升级任务表 (upgrade_tasks)
+```sql
+- id: 主键
+- package_id: 升级包ID
+- client_id: 客户端ID
+- status: 状态（pending/downloading/installing/completed/failed）
+- upgrade_type: 升级类型（user_confirm/silent_force）
+- start_time: 开始时间
+- end_time: 结束时间
+- error_message: 错误信息
+```
+
+## 5. API接口设计
+
+### 5.1 认证API
+
+#### 5.1.1 登录
+```
+POST /api/auth/login
+Request: {
+  "username": "admin",
+  "password": "password"
+}
+Response: {
+  "success": true,
+  "token": "jwt_token",
+  "expires_in": 3600
+}
+```
+
+### 5.2 客户端监控API
+
+#### 5.2.1 获取客户端列表
+```
+GET /api/clients
+Authorization: Bearer {token}
+Response: {
+  "data": [
+    {
+      "id": 1,
+      "client_id": "client-001",
+      "ip_address": "192.168.1.100",
+      "version": "1.0.2",
+      "status": "online",
+      "work_status": "enabled",
+      "last_heartbeat": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### 5.2.2 客户端心跳接口
+```
+POST /api/heartbeat
+Request: {
+  "client_id": "client-001",
+  "ip_address": "192.168.1.100",
+  "version": "1.0.2",
+  "status": "running"
+}
+Response: {
+  "success": true,
+  "commands": [
+    {
+      "type": "control",
+      "action": "disable"
+    }
+  ]
+}
+```
+
+### 5.3 远程控制API
+
+#### 5.3.1 控制客户端
+```
+POST /api/clients/{client_id}/control
+Authorization: Bearer {token}
+Request: {
+  "action": "enable" // enable, disable, restart
+}
+Response: {
+  "success": true,
+  "message": "命令已发送"
+}
+```
+
+### 5.4 升级管理API
+
+#### 5.4.1 上传升级包
+```
+POST /api/upgrade/packages
+Authorization: Bearer {token}
+Content-Type: multipart/form-data
+Form Data: {
+  "file": [upgrade_file],
+  "version": "1.0.3",
+  "description": "修复若干bug"
+}
+Response: {
+  "success": true,
+  "package_id": 1
+}
+```
+
+#### 5.4.2 创建升级任务
+```
+POST /api/upgrade/tasks
+Authorization: Bearer {token}
+Request: {
+  "package_id": 1,
+  "client_ids": [1, 2, 3],
+  "upgrade_type": "user_confirm" // user_confirm, silent_force
+}
+Response: {
+  "success": true,
+  "task_id": 1
+}
+```
+
+## 6. 用户界面设计
+
+### 6.1 主要页面
+
+#### 6.1.1 登录页
+- 用户名和密码输入框
+- 登录按钮
+- 简洁的界面设计
+
+#### 6.1.2 客户端监控页
+- 客户端列表表格（IP、版本、状态、最后心跳时间）
+- 状态指示器（在线/离线、启用/禁用）
+- 批量操作按钮
+- 实时状态更新
+
+#### 6.1.3 升级管理页
+- 升级包管理区域
+- 升级任务创建
+- 升级进度显示
+- 升级历史记录
+
+### 6.2 界面特点
+- 简洁明了的设计
+- 响应式布局
+- 实时状态更新
+- 操作反馈清晰
+
+## 7. 开发计划
+
+### 7.1 开发阶段（10周）
+
+#### Phase 1: 基础架构搭建（2周）
+- 后端FastAPI项目初始化
+- SQLAlchemy数据模型设计
+- Vue 3 + TypeScript前端项目初始化
+- Docker容器化配置
+- Sealos部署环境准备
+
+#### Phase 2: 认证和监控功能（3周）
+- JWT认证系统（python-jose）
+- WebSocket实时通信
+- 心跳监控API开发
+- Vue监控界面开发（Element Plus）
+- RPA客户端HTTP通信模块
+
+#### Phase 3: 远程控制功能（2周）
+- 远程控制API（FastAPI）
+- 命令下发和状态同步
+- Vue控制界面开发
+- 批量操作功能
+
+#### Phase 4: 升级功能开发（2周）
+- FastAPI后台任务处理
+- 升级包管理API
+- 客户端自动升级机制
+- Vue升级管理界面
+
+#### Phase 5: Sealos部署和测试（1周）
+- Sealos YAML配置编写
+- 容器镜像构建和推送
+- 生产环境部署测试
+- 系统集成测试
+
+### 7.2 里程碑
+- Week 2: 基础架构完成
+- Week 5: 监控功能完成
+- Week 7: 控制功能完成
+- Week 9: 升级功能完成
+- Week 10: 系统正式发布
+
+## 8. 成功标准
+
+### 8.1 功能完整性
+- 基本监控功能正常
+- 远程控制功能可用
+- 升级功能运行稳定
+- 界面简洁易用
+
+### 8.2 性能指标
+- 支持100+客户端同时监控
+- 心跳延迟小于10秒
+- 页面响应时间小于3秒
+- 系统运行稳定

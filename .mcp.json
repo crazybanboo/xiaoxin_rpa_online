@@ -19,6 +19,12 @@
 				"AZURE_OPENAI_API_KEY": "YOUR_AZURE_KEY_HERE",
 				"OLLAMA_API_KEY": "YOUR_OLLAMA_API_KEY_HERE"
 			}
+		},
+		"github.com/upstash/context7-mcp": {
+			"command": "cmd",
+			"args": ["/c", "npx", "-y", "@upstash/context7-mcp@latest"],
+			"disabled": false,
+			"autoApprove": []
 		}
 	}
 }
