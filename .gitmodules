@@ -1,0 +1,3 @@
+[submodule "xiaoxin_rpa_pro"]
+	path = xiaoxin_rpa_pro
+	url = git@github.com:crazybanboo/xiaoxin_rpa_pro.git
