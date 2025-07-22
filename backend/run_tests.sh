@@ -56,6 +56,18 @@ case "${1:-all}" in
     "schemas")
         run_test "schemas" "python -m pytest tests/unit/test_schemas.py -v" "Schema Tests"
         ;;
+    "auth")
+        run_test "auth" "python -m pytest tests/unit/test_auth.py -v --tb=short" "Auth Unit Tests"
+        ;;
+    "auth-integration")
+        run_test "auth-integration" "python -m pytest tests/integration/test_auth_integration.py -v" "Auth Integration Tests"
+        ;;
+    "api-integration")
+        run_test "api-integration" "python -m pytest tests/integration/test_api_integration.py -v" "API Integration Tests"
+        ;;
+    "db-integration")
+        run_test "db-integration" "python -m pytest tests/integration/test_database_integration.py -v" "Database Integration Tests"
+        ;;
     "coverage")
         run_test "coverage" "python -m pytest --cov=app --cov-report=html --cov-report=term-missing" "Coverage Tests"
         ;;
@@ -65,26 +77,47 @@ case "${1:-all}" in
     "all")
         echo "Running all test categories..."
         
+        # Unit Tests
         run_test "models" "python -m pytest tests/unit/test_models.py -v" "Model Tests"
         model_result=$?
         
         run_test "crud" "python -m pytest tests/unit/test_crud.py -v" "CRUD Tests" 
         crud_result=$?
         
-        run_test "api" "python -m pytest tests/unit/test_api.py -v" "API Tests"
-        api_result=$?
+        run_test "api_unit" "python -m pytest tests/unit/test_api.py -v" "API Unit Tests"
+        api_unit_result=$?
         
         run_test "schemas" "python -m pytest tests/unit/test_schemas.py -v" "Schema Tests"
         schema_result=$?
         
+        run_test "auth_unit" "python -m pytest tests/unit/test_auth.py -v" "Auth Unit Tests"
+        auth_unit_result=$?
+        
+        # Integration Tests
+        run_test "api_integration" "python -m pytest tests/integration/test_api_integration.py -v" "API Integration Tests"
+        api_integration_result=$?
+        
+        run_test "auth_integration" "python -m pytest tests/integration/test_auth_integration.py -v" "Auth Integration Tests"
+        auth_integration_result=$?
+        
+        run_test "db_integration" "python -m pytest tests/integration/test_database_integration.py -v" "Database Integration Tests"
+        db_integration_result=$?
+        
         # Summary
         echo -e "\n${YELLOW}=== Test Summary ===${NC}"
+        echo -e "${YELLOW}Unit Tests:${NC}"
         [ $model_result -eq 0 ] && echo -e "${GREEN}✅ Model Tests: PASSED${NC}" || echo -e "${RED}❌ Model Tests: FAILED${NC}"
         [ $crud_result -eq 0 ] && echo -e "${GREEN}✅ CRUD Tests: PASSED${NC}" || echo -e "${RED}❌ CRUD Tests: FAILED${NC}"
-        [ $api_result -eq 0 ] && echo -e "${GREEN}✅ API Tests: PASSED${NC}" || echo -e "${RED}❌ API Tests: FAILED${NC}"
+        [ $api_unit_result -eq 0 ] && echo -e "${GREEN}✅ API Unit Tests: PASSED${NC}" || echo -e "${RED}❌ API Unit Tests: FAILED${NC}"
         [ $schema_result -eq 0 ] && echo -e "${GREEN}✅ Schema Tests: PASSED${NC}" || echo -e "${RED}❌ Schema Tests: FAILED${NC}"
+        [ $auth_unit_result -eq 0 ] && echo -e "${GREEN}✅ Auth Unit Tests: PASSED${NC}" || echo -e "${RED}❌ Auth Unit Tests: FAILED${NC}"
         
-        total_failed=$((model_result + crud_result + api_result + schema_result))
+        echo -e "${YELLOW}Integration Tests:${NC}"
+        [ $api_integration_result -eq 0 ] && echo -e "${GREEN}✅ API Integration Tests: PASSED${NC}" || echo -e "${RED}❌ API Integration Tests: FAILED${NC}"
+        [ $auth_integration_result -eq 0 ] && echo -e "${GREEN}✅ Auth Integration Tests: PASSED${NC}" || echo -e "${RED}❌ Auth Integration Tests: FAILED${NC}"
+        [ $db_integration_result -eq 0 ] && echo -e "${GREEN}✅ Database Integration Tests: PASSED${NC}" || echo -e "${RED}❌ Database Integration Tests: FAILED${NC}"
+        
+        total_failed=$((model_result + crud_result + api_unit_result + schema_result + auth_unit_result + api_integration_result + auth_integration_result + db_integration_result))
         if [ $total_failed -eq 0 ]; then
             echo -e "\n${GREEN}🎉 All tests passed!${NC}"
         else
@@ -95,17 +128,27 @@ case "${1:-all}" in
     "help")
         echo "Usage: ./run_tests.sh [option]"
         echo ""
-        echo "Options:"
-        echo "  unit        - Run unit tests only"
-        echo "  integration - Run integration tests only"  
-        echo "  models      - Run model tests only"
-        echo "  crud        - Run CRUD tests only"
-        echo "  api         - Run API tests only"
-        echo "  schemas     - Run schema tests only"
-        echo "  coverage    - Run tests with coverage report"
-        echo "  quick       - Run tests quickly without coverage"
-        echo "  all         - Run all test categories (default)"
-        echo "  help        - Show this help message"
+        echo "Test Categories:"
+        echo "  unit              - Run all unit tests"
+        echo "  integration       - Run all integration tests"
+        echo "  all               - Run all test categories (default)"
+        echo ""
+        echo "Unit Test Options:"
+        echo "  models            - Run model tests only"
+        echo "  crud              - Run CRUD tests only"
+        echo "  api               - Run API unit tests only"
+        echo "  schemas           - Run schema tests only"
+        echo "  auth              - Run auth unit tests only"
+        echo ""
+        echo "Integration Test Options:"
+        echo "  api-integration   - Run API integration tests only"
+        echo "  auth-integration  - Run auth integration tests only"
+        echo "  db-integration    - Run database integration tests only"
+        echo ""
+        echo "Other Options:"
+        echo "  coverage          - Run tests with coverage report"
+        echo "  quick             - Run tests quickly without coverage"
+        echo "  help              - Show this help message"
         ;;
     *)
         echo "Unknown option: $1"

@@ -40,7 +40,7 @@ def client(db_session):
         try:
             yield db_session
         finally:
-            db_session.close()
+            pass  # Don't close the session here, let the db_session fixture handle it
     
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:

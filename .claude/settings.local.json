@@ -26,7 +26,8 @@
       "Bash(./run_tests.sh:*)",
       "Bash(npm run build:*)",
       "Bash(npx vue-tsc:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(find:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
