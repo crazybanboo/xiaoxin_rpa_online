@@ -1,6 +1,10 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from .client import Client
+    from .upgrade_package import UpgradePackage
 
 
 class UpgradeTaskBase(BaseModel):
@@ -39,5 +43,5 @@ class UpgradeTask(UpgradeTaskInDBBase):
 
 class UpgradeTaskWithRelations(UpgradeTask):
     """包含关联关系的升级任务schema"""
-    client: Optional["Client"] = None
-    package: Optional["UpgradePackage"] = None
+    client: Optional[Client] = None
+    package: Optional[UpgradePackage] = None

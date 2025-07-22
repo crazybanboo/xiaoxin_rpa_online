@@ -1,6 +1,9 @@
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from .upgrade_task import UpgradeTask
 
 
 class UpgradePackageBase(BaseModel):
@@ -41,4 +44,4 @@ class UpgradePackage(UpgradePackageInDBBase):
 
 class UpgradePackageWithTasks(UpgradePackage):
     """包含升级任务的升级包schema"""
-    upgrade_tasks: List["UpgradeTask"] = []
+    upgrade_tasks: List[UpgradeTask] = []
