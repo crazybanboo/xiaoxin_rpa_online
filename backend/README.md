@@ -192,16 +192,35 @@ python test_summary_task2.py
 ```
 
 ### 单元测试（使用pytest）
+
+**现已完全实现完整的单元测试套件！** 包含模型、CRUD、API和Schema的全面测试。
+
 ```bash
-# 运行所有测试
-pytest
+# 激活虚拟环境
+source .env/bin/activate
 
-# 运行指定测试文件
-pytest tests/test_main.py
+# 使用测试运行脚本（推荐）
+./run_tests.sh              # 运行所有测试
+./run_tests.sh coverage     # 生成覆盖率报告
+./run_tests.sh unit         # 只运行单元测试
+./run_tests.sh models       # 只运行模型测试
 
-# 生成测试覆盖率报告
-pytest --cov=app tests/
+# 或直接使用pytest
+pytest                      # 运行所有测试
+pytest tests/unit/ -v       # 运行单元测试（详细输出）
+pytest --cov=app           # 生成覆盖率报告
+pytest -n auto             # 并行运行测试
 ```
+
+#### 测试覆盖范围
+- ✅ **数据模型测试**: Admin, Client, UpgradePackage, UpgradeTask
+- ✅ **CRUD操作测试**: 创建、查询、更新、删除操作
+- ✅ **API端点测试**: FastAPI路由和错误处理
+- ✅ **Schema验证测试**: Pydantic数据验证和序列化
+- ✅ **集成测试**: 完整工作流和数据库集成
+- ✅ **测试覆盖率**: 目标80%+，生成HTML覆盖率报告
+
+详细测试文档请查看 [TESTING.md](TESTING.md)
 
 ### API测试
 ```bash
