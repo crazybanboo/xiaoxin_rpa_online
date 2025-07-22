@@ -20,17 +20,14 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     # Database
-    POSTGRES_SERVER: str = "localhost"
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = "xiaoxin_rpa"
+    DATABASE_URL: str = "sqlite:///./xiaoxin_rpa.db"
     SQLALCHEMY_DATABASE_URI: str = ""
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: str, values: dict) -> str:
         if isinstance(v, str) and v:
             return v
-        return f"postgresql://{values.get('POSTGRES_USER')}:{values.get('POSTGRES_PASSWORD')}@{values.get('POSTGRES_SERVER')}/{values.get('POSTGRES_DB')}"
+        return values.get("DATABASE_URL", "sqlite:///./xiaoxin_rpa.db")
 
     # Security
     SECRET_KEY: str = "your-secret-key-here"

@@ -15,7 +15,13 @@
       "Bash(uvicorn:*)",
       "Bash(curl:*)",
       "Bash(npm install)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(ls:*)",
+      "Bash(PYTHONPATH=/root/mycode/xiaoxin_rpa_online/backend python test_db.py)",
+      "Bash(.env/bin/python:*)",
+      "Bash(.env/bin/pip:*)",
+      "Bash(PYTHONPATH=/root/mycode/xiaoxin_rpa_online/backend .env/bin/python test_db.py)",
+      "Bash(rm:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

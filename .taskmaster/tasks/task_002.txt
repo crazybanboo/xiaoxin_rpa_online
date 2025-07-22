@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: 数据库模型和数据层设计
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: 使用SQLAlchemy设计和实现核心数据模型，包括管理员、客户端、升级包和升级任务表
@@ -11,31 +11,31 @@
 编写单元测试验证每个模型的CRUD操作，测试数据库连接和表创建功能
 
 # Subtasks:
-## 1. 数据模型设计 [pending]
+## 1. 数据模型设计 [done]
 ### Dependencies: None
 ### Description: 设计管理员、客户端、升级包和升级任务的数据模型结构，定义表字段和关联关系
 ### Details:
 设计admins表(id, username, password_hash, email, created_at)、clients表(id, name, ip_address, version, status, last_heartbeat)、upgrade_packages表(id, name, version, file_path, file_size, created_at)、upgrade_tasks表(id, client_id, package_id, status, created_at, completed_at)。定义表之间的外键关系和索引策略。
 
-## 2. SQLAlchemy ORM实现 [pending]
+## 2. SQLAlchemy ORM实现 [done]
 ### Dependencies: 2.1
 ### Description: 基于数据模型设计实现SQLAlchemy ORM模型类和数据表映射
 ### Details:
 创建models.py文件，实现Admin、Client、UpgradePackage、UpgradeTask等模型类。配置SQLAlchemy的Column、关系映射、约束条件。实现模型类的__repr__方法和必要的属性验证。设置合适的数据类型和长度限制。
 
-## 3. 数据库连接配置 [pending]
+## 3. 数据库连接配置 [done]
 ### Dependencies: 2.2
 ### Description: 配置SQLite数据库连接和SQLAlchemy引擎，实现数据库会话管理
 ### Details:
 创建database.py配置文件，设置SQLite数据库连接字符串和引擎参数。实现数据库会话工厂和上下文管理器。配置连接池和事务管理。添加数据库健康检查功能，确保连接稳定性。
 
-## 4. 迁移机制实现 [pending]
+## 4. 迁移机制实现 [done]
 ### Dependencies: 2.3
 ### Description: 实现数据库表创建和数据迁移机制，支持版本升级时的数据结构变更
 ### Details:
 创建数据库初始化脚本，实现自动创建所有表结构。设计简单的迁移系统，支持数据库版本管理。实现数据库备份和恢复功能。添加初始化数据的seed脚本，包括默认管理员账户创建。
 
-## 5. 数据访问层CRUD操作 [pending]
+## 5. 数据访问层CRUD操作 [done]
 ### Dependencies: 2.4
 ### Description: 为每个数据模型实现基础的增删改查操作接口
 ### Details:
