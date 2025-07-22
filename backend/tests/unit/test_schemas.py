@@ -129,7 +129,8 @@ class TestClientSchemas:
         """Test ClientCreate with invalid IP address format"""
         client_data = {
             "name": "测试客户端",
-            "ip_address": "invalid_ip"
+            "ip_address": "invalid_ip",
+            "version": "1.0.0"
         }
         # Note: The schema doesn't enforce IP format validation currently
         # This test would fail if IP validation was added

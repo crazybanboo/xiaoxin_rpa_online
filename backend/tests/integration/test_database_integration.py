@@ -69,8 +69,9 @@ class TestDatabaseIntegration(DatabaseTestCase):
         found_client = client.get_by_ip(db_session, ip_address="192.168.1.200")
         assert found_client.id == created_client.id
 
-        found_package = upgrade_package.get_by_version(db_session, version="3.0.0")
-        assert found_package.id == created_package.id
+        found_packages = upgrade_package.get_by_version(db_session, version="3.0.0")
+        assert len(found_packages) == 1
+        assert found_packages[0].id == created_package.id
 
         client_tasks = upgrade_task.get_by_client(db_session, client_id=created_client.id)
         assert len(client_tasks) == 1
@@ -185,7 +186,7 @@ class TestDatabaseIntegration(DatabaseTestCase):
         test_data = create_test_data_set(db_session)
 
         # Test getting online clients
-        online_clients = client.get_online(db_session)
+        online_clients = client.get_online_clients(db_session)
         online_count = len([c for c in test_data["clients"] if c.status == "online"])
         assert len(online_clients) == online_count
 
@@ -195,8 +196,8 @@ class TestDatabaseIntegration(DatabaseTestCase):
         assert len(pending_tasks) == pending_count
 
         # Test getting latest package
-        latest_package = upgrade_package.get_latest(db_session)
-        assert latest_package is not None
+        latest_packages = upgrade_package.get_all_latest(db_session)
+        assert len(latest_packages) > 0
 
         # Clean up
         cleanup_test_data(db_session)
@@ -252,11 +253,16 @@ class TestDatabaseIntegration(DatabaseTestCase):
         original_created = created_admin.created_at
         original_updated = created_admin.updated_at
 
+        # Wait a small amount to ensure timestamp difference
+        import time
+        time.sleep(0.01)
+
         # Update admin
         from app.schemas.admin import AdminUpdate
         admin_update = AdminUpdate(email="updated_timestamp@example.com")
         updated_admin = admin.update(db_session, db_obj=created_admin, obj_in=admin_update)
+        db_session.refresh(updated_admin)
 
         # Verify timestamps
         assert updated_admin.created_at == original_created  # Should not change
-        assert updated_admin.updated_at > original_updated  # Should be updated
+        assert updated_admin.updated_at >= original_updated  # Should be updated

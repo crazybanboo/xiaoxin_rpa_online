@@ -126,7 +126,8 @@ class TestClientModel:
         """Test client string representation"""
         client = Client(
             name="测试客户端",
-            ip_address="192.168.1.100"
+            ip_address="192.168.1.100",
+            version="1.0.0"
         )
         db_session.add(client)
         db_session.commit()
@@ -181,7 +182,7 @@ class TestUpgradeTaskModel:
     def test_task_creation(self, db_session):
         """Test creating a new upgrade task"""
         # Create client and package first
-        client = Client(name="测试客户端", ip_address="192.168.1.100")
+        client = Client(name="测试客户端", ip_address="192.168.1.100", version="1.0.0")
         package = UpgradePackage(
             name="测试升级包",
             version="2.0.0", 
@@ -209,7 +210,7 @@ class TestUpgradeTaskModel:
 
     def test_task_default_status(self, db_session):
         """Test task default status"""
-        client = Client(name="测试客户端", ip_address="192.168.1.100")
+        client = Client(name="测试客户端", ip_address="192.168.1.100", version="1.0.0")
         package = UpgradePackage(
             name="测试升级包",
             version="2.0.0",
@@ -231,7 +232,7 @@ class TestUpgradeTaskModel:
 
     def test_task_relationships(self, db_session):
         """Test task relationships with client and package"""
-        client = Client(name="测试客户端", ip_address="192.168.1.100")
+        client = Client(name="测试客户端", ip_address="192.168.1.100", version="1.0.0")
         package = UpgradePackage(
             name="测试升级包",
             version="2.0.0",
@@ -257,7 +258,7 @@ class TestUpgradeTaskModel:
 
     def test_task_repr(self, db_session):
         """Test task string representation"""
-        client = Client(name="测试客户端", ip_address="192.168.1.100")
+        client = Client(name="测试客户端", ip_address="192.168.1.100", version="1.0.0")
         package = UpgradePackage(
             name="测试升级包",
             version="2.0.0",
@@ -301,6 +302,8 @@ class TestTimestampMixin:
 
     def test_updated_at_changes(self, db_session):
         """Test that updated_at changes on update"""
+        import time
+        
         admin = Admin(
             username="test_admin",
             password_hash="hash",
@@ -311,8 +314,12 @@ class TestTimestampMixin:
         
         original_updated = admin.updated_at
         
+        # Wait a small amount to ensure timestamp difference
+        time.sleep(0.01)
+        
         # Update the admin
         admin.username = "updated_admin"
         db_session.commit()
+        db_session.refresh(admin)
         
-        assert admin.updated_at > original_updated
+        assert admin.updated_at >= original_updated

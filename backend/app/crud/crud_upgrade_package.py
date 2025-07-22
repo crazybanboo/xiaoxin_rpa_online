@@ -21,7 +21,7 @@ class CRUDUpgradePackage(CRUDBase[UpgradePackage, UpgradePackageCreate, UpgradeP
         return (
             db.query(UpgradePackage)
             .filter(UpgradePackage.name == name)
-            .order_by(UpgradePackage.created_at.desc())
+            .order_by(UpgradePackage.version.desc(), UpgradePackage.created_at.desc())
             .first()
         )
     
