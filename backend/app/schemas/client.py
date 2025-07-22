@@ -46,4 +46,4 @@ class Client(ClientInDBBase):
 
 class ClientWithTasks(Client):
     """包含升级任务的客户端schema"""
-    upgrade_tasks: List[UpgradeTask] = []
+    upgrade_tasks: List["UpgradeTask"] = []

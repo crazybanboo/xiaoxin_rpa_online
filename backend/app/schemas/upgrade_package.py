@@ -44,4 +44,4 @@ class UpgradePackage(UpgradePackageInDBBase):
 
 class UpgradePackageWithTasks(UpgradePackage):
     """包含升级任务的升级包schema"""
-    upgrade_tasks: List[UpgradeTask] = []
+    upgrade_tasks: List["UpgradeTask"] = []

@@ -5,8 +5,8 @@ from app.models.base import Base
 
 # 创建数据库引擎
 engine = create_engine(
-    settings.SQLALCHEMY_DATABASE_URI,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.SQLALCHEMY_DATABASE_URI else {}
+    settings.DATABASE_URL,
+    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
 )
 
 # 创建会话工厂

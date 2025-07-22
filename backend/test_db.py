@@ -28,9 +28,12 @@ def test_database():
     try:
         # 测试管理员CRUD
         print("\n测试管理员CRUD操作...")
+        # 使用时间戳来确保唯一性
+        import time
+        timestamp = str(int(time.time()))
         admin_data = AdminCreate(
-            username="test_admin",
-            email="test@example.com",
+            username=f"test_admin_{timestamp}",
+            email=f"test{timestamp}@example.com",
             password="test123"
         )
         created_admin = admin.create_with_password(db, obj_in=admin_data)
@@ -39,8 +42,8 @@ def test_database():
         # 测试客户端CRUD
         print("\n测试客户端CRUD操作...")
         client_data = ClientCreate(
-            name="测试客户端",
-            ip_address="192.168.1.100",
+            name=f"测试客户端_{timestamp}",
+            ip_address=f"192.168.1.{int(timestamp[-3:]) % 255}",
             version="1.0.0",
             status="online"
         )
@@ -50,9 +53,9 @@ def test_database():
         # 测试升级包CRUD
         print("\n测试升级包CRUD操作...")
         package_data = UpgradePackageCreate(
-            name="测试升级包",
-            version="2.0.0",
-            file_path="/path/to/package.zip",
+            name=f"测试升级包_{timestamp}",
+            version=f"2.0.{timestamp[-2:]}",
+            file_path=f"/path/to/package_{timestamp}.zip",
             file_size=1024000
         )
         created_package = upgrade_package.create(db, obj_in=package_data)

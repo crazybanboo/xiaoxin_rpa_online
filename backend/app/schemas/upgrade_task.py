@@ -43,5 +43,5 @@ class UpgradeTask(UpgradeTaskInDBBase):
 
 class UpgradeTaskWithRelations(UpgradeTask):
     """包含关联关系的升级任务schema"""
-    client: Optional[Client] = None
-    package: Optional[UpgradePackage] = None
+    client: Optional["Client"] = None
+    package: Optional["UpgradePackage"] = None

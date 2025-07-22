@@ -22,14 +22,6 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str = "sqlite:///./xiaoxin_rpa.db"
-    SQLALCHEMY_DATABASE_URI: str = ""
-
-    @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
-    @classmethod
-    def assemble_db_connection(cls, v: str, values: dict) -> str:
-        if isinstance(v, str) and v:
-            return v
-        return values.get("DATABASE_URL", "sqlite:///./xiaoxin_rpa.db")
 
     # Security
     SECRET_KEY: str = "your-secret-key-here"
