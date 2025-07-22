@@ -23,7 +23,10 @@
       "Bash(PYTHONPATH=/root/mycode/xiaoxin_rpa_online/backend .env/bin/python test_db.py)",
       "Bash(rm:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(./run_tests.sh:*)"
+      "Bash(./run_tests.sh:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx vue-tsc:*)",
+      "Bash(npx vite:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

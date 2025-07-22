@@ -145,7 +145,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -153,7 +153,7 @@
             "description": "使用python-jose实现JWT token的生成、验证和解析功能",
             "dependencies": [],
             "details": "1. 安装并配置python-jose库。2. 创建JWT工具类，实现token生成方法，包括设置过期时间、用户信息编码。3. 实现token验证和解析方法，处理过期、无效token的异常情况。4. 配置JWT密钥和算法参数。5. 添加token刷新机制支持。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -164,7 +164,7 @@
               "3.1"
             ],
             "details": "1. 创建/api/auth/login POST接口。2. 实现用户名密码验证逻辑，与数据库中的管理员信息比对。3. 使用bcrypt进行密码hash验证。4. 登录成功后生成并返回JWT token。5. 添加登录失败次数限制和安全措施。6. 实现登录日志记录功能。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -175,7 +175,7 @@
               "3.1"
             ],
             "details": "1. 创建JWT认证中间件类。2. 实现从请求头Authorization中提取token的逻辑。3. 集成JWT工具类进行token验证。4. 处理token过期、无效等异常情况，返回相应HTTP状态码。5. 实现路由白名单机制，排除不需要认证的接口。6. 将验证通过的用户信息注入到请求上下文中。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -184,7 +184,7 @@
             "description": "使用Vue 3和Element Plus创建用户登录界面",
             "dependencies": [],
             "details": "1. 创建登录页面组件，使用Element Plus表单组件。2. 实现用户名密码输入验证，包括格式检查和必填验证。3. 集成axios调用登录API接口。4. 添加登录状态反馈，包括loading状态和错误提示。5. 实现登录成功后的页面跳转逻辑。6. 添加记住登录状态的复选框功能。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -196,7 +196,7 @@
               "3.4"
             ],
             "details": "1. 使用localStorage或sessionStorage存储JWT token。2. 配置axios请求拦截器，自动在请求头中添加Authorization bearer token。3. 实现axios响应拦截器，处理401未授权状态。4. 开发token自动刷新机制，在token即将过期时自动续期。5. 实现用户登出功能，清除本地存储的token。6. 添加token过期后自动跳转到登录页的逻辑。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -702,7 +702,7 @@
     ],
     "metadata": {
       "created": "2025-07-21T15:07:28.400Z",
-      "updated": "2025-07-22T04:53:56.392Z",
+      "updated": "2025-07-22T11:03:12.390Z",
       "description": "Tasks for master context"
     }
   }

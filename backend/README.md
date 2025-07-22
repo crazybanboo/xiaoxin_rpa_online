@@ -64,9 +64,10 @@ backend/
 ├── alembic/               # 数据库迁移工具
 ├── .env/                  # Python虚拟环境
 ├── requirements.txt       # Python依赖包
-├── test_db.py            # 数据库测试脚本
-├── test_api.py           # API测试脚本
-├── test_relationships.py # 数据关系测试脚本
+├── tests/               # pytest测试套件
+│   ├── unit/            # 单元测试
+│   ├── integration/     # 集成测试
+│   └── fixtures/        # 测试数据和夹具
 ├── xiaoxin_rpa.db        # SQLite数据库文件
 ├── Dockerfile.dev        # Docker开发环境配置
 └── README.md             # 项目说明文档
@@ -173,27 +174,9 @@ docker run -p 8000:8000 xiaoxin-rpa-backend
 
 ## 🧪 测试
 
-### 运行内置测试脚本
-```bash
-# 激活虚拟环境
-source .env/bin/activate
+### 运行测试（推荐使用pytest）
 
-# 测试数据库基础功能
-python test_db.py
-
-# 测试数据模型关系
-python test_relationships.py
-
-# 测试API端点
-python test_api.py
-
-# 运行综合测试总结
-python test_summary_task2.py
-```
-
-### 单元测试（使用pytest）
-
-**现已完全实现完整的单元测试套件！** 包含模型、CRUD、API和Schema的全面测试。
+使用现代化的pytest测试套件，提供完整的测试覆盖和报告功能。
 
 ```bash
 # 激活虚拟环境
@@ -212,10 +195,12 @@ pytest --cov=app           # 生成覆盖率报告
 pytest -n auto             # 并行运行测试
 ```
 
-#### 测试覆盖范围
+**现已完全实现完整的单元测试套件！** 包含以下测试覆盖：
+
 - ✅ **数据模型测试**: Admin, Client, UpgradePackage, UpgradeTask
 - ✅ **CRUD操作测试**: 创建、查询、更新、删除操作
 - ✅ **API端点测试**: FastAPI路由和错误处理
+- ✅ **认证系统测试**: JWT登录、token验证、刷新和登出
 - ✅ **Schema验证测试**: Pydantic数据验证和序列化
 - ✅ **集成测试**: 完整工作流和数据库集成
 - ✅ **测试覆盖率**: 目标80%+，生成HTML覆盖率报告

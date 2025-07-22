@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosError } from 'axios'
+import axios, { type AxiosResponse, type AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
 
 // 创建axios实例
@@ -14,7 +14,14 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 在发送请求之前做些什么
-    // 可以在此处添加token等认证信息
+    // 自动添加token到请求头
+    const token = localStorage.getItem('access_token')
+    const tokenType = localStorage.getItem('token_type') || 'bearer'
+    
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `${tokenType} ${token}`
+    }
+    
     return config
   },
   error => {
@@ -30,7 +37,7 @@ service.interceptors.response.use(
     const res = response.data
     return res
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     // 对响应错误做点什么
     let message = '网络错误'
     
@@ -41,6 +48,34 @@ service.interceptors.response.use(
           break
         case 401:
           message = '未授权，请重新登录'
+          // 处理401错误 - token过期
+          const refreshToken = localStorage.getItem('refresh_token')
+          if (refreshToken && error.config) {
+            try {
+              // 尝试刷新token
+              const response = await axios.post('/api/v1/auth/refresh', {
+                refresh_token: refreshToken
+              })
+              
+              const { access_token, token_type } = response.data
+              localStorage.setItem('access_token', access_token)
+              localStorage.setItem('token_type', token_type)
+              
+              // 重新发送原请求
+              error.config.headers.Authorization = `${token_type} ${access_token}`
+              return service.request(error.config)
+            } catch (refreshError) {
+              // 刷新失败，清除token并跳转到登录页
+              localStorage.removeItem('access_token')
+              localStorage.removeItem('refresh_token')
+              localStorage.removeItem('token_type')
+              // 可以在这里触发路由跳转到登录页
+              window.location.href = '/login'
+            }
+          } else {
+            // 没有refresh token，直接跳转登录页
+            window.location.href = '/login'
+          }
           break
         case 403:
           message = '拒绝访问'

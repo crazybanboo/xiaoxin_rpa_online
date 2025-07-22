@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.api_v1.api import api_router
 from app.core.config import settings
+from app.core.middleware import JWTAuthMiddleware
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -19,6 +20,10 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+# Add JWT Authentication Middleware
+# Note: 注释掉中间件，因为使用依赖注入方式更灵活
+# app.add_middleware(JWTAuthMiddleware)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 

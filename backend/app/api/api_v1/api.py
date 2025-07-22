@@ -1,6 +1,13 @@
 from fastapi import APIRouter
+from app.api.api_v1.endpoints import auth, admin
 
 api_router = APIRouter()
+
+# 认证相关路由
+api_router.include_router(auth.router, prefix="/auth", tags=["authentication"])
+
+# 管理员相关路由 (需要认证)
+api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
 
 
 @api_router.get("/")
