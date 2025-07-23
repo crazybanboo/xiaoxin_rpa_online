@@ -26,6 +26,15 @@ export const useApiStore = defineStore('api', {
       } catch (error) {
         throw error
       }
+    },
+
+    async getClients() {
+      try {
+        const response = await axios.get(`${this.baseURL}/v1/clients`)
+        return response
+      } catch (error) {
+        throw error
+      }
     }
   }
 })

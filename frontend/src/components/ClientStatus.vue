@@ -149,12 +149,12 @@ import {
 } from '@element-plus/icons-vue'
 import { useClientStore } from '@/stores/client'
 import { useClientStatusWebSocket } from '@/composables/useWebSocket'
-import { useApi } from '@/stores/api'
+import { useApiStore } from '@/stores/api'
 import type { Client } from '@/stores/client'
 
 const clientStore = useClientStore()
 const { isConnected } = useClientStatusWebSocket()
-const api = useApi()
+const apiStore = useApiStore()
 
 // 格式化时间
 const formatTime = (timeStr: string) => {
@@ -197,7 +197,7 @@ const handleStatusFilter = (value: 'all' | 'online' | 'offline') => {
 const refreshClients = async () => {
   try {
     clientStore.setLoading(true)
-    const response = await api.get('/api/v1/clients')
+    const response = await apiStore.getClients()
     clientStore.setClients(response.data)
     ElMessage.success('刷新成功')
   } catch (error) {

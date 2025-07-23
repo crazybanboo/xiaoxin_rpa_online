@@ -20,3 +20,28 @@ source .env/bin/activate
 # 运行所有测试
 ./run_tests.sh
 ```
+
+# frontend
+
+如果你在开发frontend，请使用以下命令：
+
+先进入到frontend目录下，然后执行以下命令：
+```bash
+# 开发环境运行
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 预览构建结果
+npm run preview
+
+# 代码检查
+npm run lint
+
+# 代码格式化
+npm run format
+
+# 类型检查
+npm run type-check
+```
