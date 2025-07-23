@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.api_v1.endpoints import auth, admin
+from app.api.api_v1.endpoints import auth, admin, heartbeat
 
 api_router = APIRouter()
 
@@ -8,6 +8,9 @@ api_router.include_router(auth.router, prefix="/auth", tags=["authentication"])
 
 # 管理员相关路由 (需要认证)
 api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
+
+# 心跳相关路由
+api_router.include_router(heartbeat.router, prefix="/client", tags=["heartbeat"])
 
 
 @api_router.get("/")

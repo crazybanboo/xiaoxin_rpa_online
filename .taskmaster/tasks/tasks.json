@@ -211,15 +211,15 @@
         "dependencies": [
           3
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
             "title": "心跳API接口开发",
             "description": "开发客户端心跳接收API接口，处理心跳数据验证和状态更新",
             "dependencies": [],
-            "details": "实现/api/heartbeat POST接口，接收客户端ID、时间戳、状态信息等参数。验证客户端合法性，更新数据库中客户端的最后心跳时间和状态。设计心跳数据格式和响应结构。",
-            "status": "pending",
+            "details": "实现/api/heartbeat POST接口，接收客户端ID、时间戳、状态信息等参数。验证客户端合法性，更新数据库中客户端的最后心跳时间和状态。设计心跳数据格式和响应结构。\n<info added on 2025-07-23T02:58:38.880Z>\n✅ 心跳API接口开发完成。已实现POST /api/client/heartbeat接口接收心跳数据和GET /api/client/heartbeat/status/{client_id}接口查询客户端状态。创建了HeartbeatRequest和HeartbeatResponse数据模型，集成客户端验证、状态更新、版本和IP地址管理功能。使用FastAPI路由系统，添加到主API路由器，所有现有测试通过。\n</info added on 2025-07-23T02:58:38.880Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -227,8 +227,8 @@
             "title": "WebSocket实时通信实现",
             "description": "实现WebSocket服务器端，提供实时状态推送功能",
             "dependencies": [],
-            "details": "使用FastAPI WebSocket支持创建WebSocket端点。实现连接管理、客户端状态变化事件推送。处理连接建立、断开、重连逻辑。设计实时消息格式和事件类型。",
-            "status": "pending",
+            "details": "使用FastAPI WebSocket支持创建WebSocket端点。实现连接管理、客户端状态变化事件推送。处理连接建立、断开、重连逻辑。设计实时消息格式和事件类型。\n<info added on 2025-07-23T03:18:43.222Z>\nWebSocket实时通信功能已完成开发和集成。创建了WebSocket管理器实现连接管理、主题订阅和消息广播功能。在心跳端点集成实时通知机制，新增WebSocket端点支持双向通信。定义了完整的消息类型和JSON格式规范。通过test_websocket.py测试脚本验证功能正常。实现了异步消息处理、连接生命周期管理和异常处理机制。现在系统支持客户端状态变化的实时推送。\n</info added on 2025-07-23T03:18:43.222Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -702,7 +702,7 @@
     ],
     "metadata": {
       "created": "2025-07-21T15:07:28.400Z",
-      "updated": "2025-07-22T11:03:12.390Z",
+      "updated": "2025-07-23T03:18:50.076Z",
       "description": "Tasks for master context"
     }
   }
