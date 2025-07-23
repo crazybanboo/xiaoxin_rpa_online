@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 from app.api.deps import get_db
@@ -7,6 +7,7 @@ from app.core.config import settings
 from app.core.security import jwt_handler
 from app.crud.crud_admin import admin
 from app.schemas.auth import LoginRequest, TokenResponse, TokenRefreshRequest
+from app.core.logger import auth_logger
 from typing import Dict, Any
 
 router = APIRouter()
@@ -16,6 +17,7 @@ security = HTTPBearer()
 @router.post("/login", response_model=TokenResponse)
 def login(
     login_data: LoginRequest, 
+    request: Request,
     db: Session = Depends(get_db)
 ) -> TokenResponse:
     """
@@ -27,12 +29,16 @@ def login(
     Returns:
         TokenResponse: 包含访问token和刷新token
     """
+    client_ip = request.client.host if request.client else "unknown"
+    auth_logger.info(f"Login attempt for user: {login_data.username} from IP: {client_ip}")
+    
     # 验证管理员账号密码
     admin_user = admin.authenticate(
         db, username=login_data.username, password=login_data.password
     )
     
     if not admin_user:
+        auth_logger.warning(f"Failed login attempt for user: {login_data.username} from IP: {client_ip}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="用户名或密码错误",
@@ -42,6 +48,8 @@ def login(
     # 生成访问token和刷新token
     access_token = jwt_handler.create_access_token(subject=admin_user.username)
     refresh_token = jwt_handler.create_refresh_token(subject=admin_user.username)
+    
+    auth_logger.info(f"Successful login for user: {admin_user.username} from IP: {client_ip}")
     
     return TokenResponse(
         access_token=access_token,
@@ -109,7 +117,7 @@ def verify_token(token: str = Depends(security)) -> Dict[str, Any]:
 
 
 @router.post("/logout")
-def logout() -> Dict[str, str]:
+def logout(request: Request) -> Dict[str, str]:
     """
     用户登出接口
     
@@ -119,5 +127,9 @@ def logout() -> Dict[str, str]:
     Returns:
         dict: 登出成功消息
     """
-    # 这里可以添加登出日志记录等操作
+    client_ip = request.client.host if request.client else "unknown"
+    # 尝试从请求状态获取用户信息
+    username = getattr(request.state, 'current_user', 'unknown')
+    
+    auth_logger.info(f"User logout: {username} from IP: {client_ip}")
     return {"message": "登出成功"}

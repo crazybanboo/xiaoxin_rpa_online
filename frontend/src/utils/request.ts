@@ -1,5 +1,6 @@
 import axios, { type AxiosResponse, type AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
+import { apiLogger } from './logger'
 
 // 创建axios实例
 const service = axios.create({
@@ -13,7 +14,15 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    // 在发送请求之前做些什么
+    // 记录请求开始时间
+    config.metadata = { startTime: Date.now() }
+    
+    // 记录API请求
+    apiLogger.logApiRequest(config.method || 'unknown', config.url || '', {
+      params: config.params,
+      data: config.data
+    })
+    
     // 自动添加token到请求头
     const token = localStorage.getItem('access_token')
     const tokenType = localStorage.getItem('token_type') || 'bearer'
@@ -26,6 +35,7 @@ service.interceptors.request.use(
   },
   error => {
     // 对请求错误做些什么
+    apiLogger.error('Request interceptor error', error)
     return Promise.reject(error)
   }
 )
@@ -33,11 +43,48 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response: AxiosResponse) => {
+    // 计算响应时间
+    const responseTime = response.config.metadata?.startTime 
+      ? Date.now() - response.config.metadata.startTime 
+      : undefined
+    
+    // 记录API响应
+    apiLogger.logApiResponse(
+      response.config.method || 'unknown',
+      response.config.url || '',
+      response.status,
+      responseTime,
+      response.data
+    )
+    
     // 对响应数据做点什么
     const res = response.data
     return res
   },
   async (error: AxiosError) => {
+    // 计算响应时间
+    const responseTime = error.config?.metadata?.startTime 
+      ? Date.now() - error.config.metadata.startTime 
+      : undefined
+    
+    // 记录API错误响应
+    if (error.response) {
+      apiLogger.logApiResponse(
+        error.config?.method || 'unknown',
+        error.config?.url || '',
+        error.response.status,
+        responseTime,
+        error.response.data
+      )
+    } else {
+      apiLogger.error('API request failed', {
+        method: error.config?.method,
+        url: error.config?.url,
+        message: error.message,
+        responseTime
+      })
+    }
+    
     // 对响应错误做点什么
     let message = '网络错误'
     

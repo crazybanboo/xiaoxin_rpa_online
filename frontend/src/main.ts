@@ -6,6 +6,16 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import App from './App.vue'
 import router from './router'
+import { Logger, LogLevel, appLogger } from './utils/logger'
+
+// 设置日志级别（根据环境变量）
+const isDev = import.meta.env.DEV
+Logger.setLevel(isDev ? LogLevel.DEBUG : LogLevel.INFO)
+
+appLogger.info('🚀 Application starting...', {
+  environment: isDev ? 'development' : 'production',
+  timestamp: new Date().toISOString()
+})
 
 const app = createApp(App)
 
@@ -19,3 +29,5 @@ app.use(router)
 app.use(ElementPlus)
 
 app.mount('#app')
+
+appLogger.info('✅ Application started successfully')

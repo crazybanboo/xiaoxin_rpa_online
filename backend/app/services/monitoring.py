@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -11,8 +10,7 @@ from app.core.database import SessionLocal
 from app.crud.crud_client import client as client_crud
 from app.websocket.websocket_manager import WebSocketManager, MessageType
 from app.core.config import settings
-
-logger = logging.getLogger(__name__)
+from app.core.logger import monitoring_logger
 
 
 class ClientMonitoringService:
@@ -46,10 +44,10 @@ class ClientMonitoringService:
                 if client.last_heartbeat and client.last_heartbeat < timeout_threshold:
                     # Mark client as offline
                     self._mark_client_offline_sync(db, client.id)
-                    logger.info(f"Client {client.id} marked as offline due to heartbeat timeout")
+                    monitoring_monitoring_logger.info(f"Client {client.id} marked as offline due to heartbeat timeout")
                     
         except Exception as e:
-            logger.error(f"Error during heartbeat monitoring: {str(e)}")
+            monitoring_logger.error(f"Error during heartbeat monitoring: {str(e)}")
         finally:
             db.close()
     
@@ -72,7 +70,7 @@ class ClientMonitoringService:
             asyncio.create_task(self._send_offline_notification(updated_client))
                 
         except Exception as e:
-            logger.error(f"Error marking client {client_id} as offline: {str(e)}")
+            monitoring_logger.error(f"Error marking client {client_id} as offline: {str(e)}")
     
     async def _send_offline_notification(self, client):
         """Send WebSocket notification for offline client"""
@@ -91,7 +89,7 @@ class ClientMonitoringService:
                 }
             )
         except Exception as e:
-            logger.error(f"Error sending offline notification for client {client.id}: {str(e)}")
+            monitoring_logger.error(f"Error sending offline notification for client {client.id}: {str(e)}")
     
     def start(self):
         """Start the monitoring service"""
@@ -107,19 +105,19 @@ class ClientMonitoringService:
             
             # Start the scheduler
             self.scheduler.start()
-            logger.info(f"Client monitoring service started (interval: {self.check_interval}s, timeout: {self.heartbeat_timeout}s)")
+            monitoring_logger.info(f"Client monitoring service started (interval: {self.check_interval}s, timeout: {self.heartbeat_timeout}s)")
             
         except Exception as e:
-            logger.error(f"Failed to start monitoring service: {str(e)}")
+            monitoring_logger.error(f"Failed to start monitoring service: {str(e)}")
             raise
     
     def stop(self):
         """Stop the monitoring service"""
         try:
             self.scheduler.shutdown(wait=True)
-            logger.info("Client monitoring service stopped")
+            monitoring_logger.info("Client monitoring service stopped")
         except Exception as e:
-            logger.error(f"Error stopping monitoring service: {str(e)}")
+            monitoring_logger.error(f"Error stopping monitoring service: {str(e)}")
 
 
 # Global instance

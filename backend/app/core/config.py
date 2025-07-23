@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     # Client Monitoring
     HEARTBEAT_TIMEOUT_SECONDS: int = 60  # 客户端心跳超时时间（秒）
     HEARTBEAT_CHECK_INTERVAL_SECONDS: int = 30  # 心跳检查间隔（秒）
+    
+    # Logging
+    LOG_LEVEL: str = "INFO"  # 日志级别: DEBUG, INFO, WARNING, ERROR, CRITICAL
+    LOG_FILE_MAX_SIZE: int = 10 * 1024 * 1024  # 日志文件最大大小（字节）
+    LOG_FILE_BACKUP_COUNT: int = 5  # 保留的日志文件数量
+    LOG_DAILY_BACKUP_COUNT: int = 30  # 每日日志保留天数
 
     class Config:
         case_sensitive = True

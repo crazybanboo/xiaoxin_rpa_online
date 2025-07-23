@@ -1,3 +1,4 @@
+import time
 from typing import List, Optional
 from fastapi import Request, HTTPException, status
 from fastapi.security.utils import get_authorization_scheme_param
@@ -5,6 +6,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 from app.core.security import jwt_handler
 from app.core.config import settings
+from app.core.logger import auth_logger, api_logger
 
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
@@ -53,6 +55,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         scheme, token = get_authorization_scheme_param(authorization)
         
         if not authorization or scheme.lower() != "bearer":
+            auth_logger.warning(f"Missing or invalid authorization header for {path} from {request.client.host if request.client else 'unknown'}")
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={"detail": "缺少认证凭据"},
@@ -62,6 +65,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         # 验证token
         username = jwt_handler.verify_token(token)
         if not username:
+            auth_logger.warning(f"Invalid token for {path} from {request.client.host if request.client else 'unknown'}")
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={"detail": "无效的认证凭据"},
@@ -70,6 +74,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         
         # 将用户信息添加到请求状态中
         request.state.current_user = username
+        auth_logger.debug(f"Authenticated user {username} for {path}")
         
         response = await call_next(request)
         return response
@@ -91,3 +96,53 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
 def get_current_user_from_state(request: Request) -> Optional[str]:
     """从请求状态中获取当前用户"""
     return getattr(request.state, 'current_user', None)
+
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    """
+    请求日志中间件
+    
+    记录所有API请求的详细信息，包括请求时间、响应时间、状态码等
+    """
+    
+    async def dispatch(self, request: Request, call_next):
+        """处理请求并记录日志"""
+        start_time = time.time()
+        
+        # 获取请求信息
+        method = request.method
+        url = str(request.url)
+        client_ip = request.client.host if request.client else "unknown"
+        user_agent = request.headers.get("User-Agent", "unknown")
+        
+        # 记录请求开始
+        api_logger.info(f"🚀 {method} {url} - IP: {client_ip}")
+        
+        try:
+            # 处理请求
+            response = await call_next(request)
+            
+            # 计算处理时间
+            process_time = time.time() - start_time
+            
+            # 记录响应
+            status_code = response.status_code
+            if status_code < 400:
+                api_logger.info(f"✅ {method} {url} - {status_code} - {process_time:.3f}s")
+            elif status_code < 500:
+                api_logger.warning(f"⚠️ {method} {url} - {status_code} - {process_time:.3f}s")
+            else:
+                api_logger.error(f"❌ {method} {url} - {status_code} - {process_time:.3f}s")
+            
+            # 添加处理时间到响应头
+            response.headers["X-Process-Time"] = str(process_time)
+            
+            return response
+            
+        except Exception as e:
+            # 计算处理时间
+            process_time = time.time() - start_time
+            
+            # 记录异常
+            api_logger.error(f"💥 {method} {url} - Exception: {str(e)} - {process_time:.3f}s")
+            raise

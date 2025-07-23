@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
+import { authLogger } from '@/utils/logger'
 
 interface LoginData {
   username: string
@@ -66,9 +67,12 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (loginData: LoginData): Promise<boolean> => {
     try {
       isLoading.value = true
+      authLogger.info(`Login attempt for user: ${loginData.username}`)
+      
       const response = await request.post<TokenResponse>('/v1/auth/login', loginData)
       
       setTokens(response.data)
+      authLogger.info(`Login successful for user: ${loginData.username}`)
       ElMessage.success('登录成功')
       
       // 获取用户信息
@@ -76,7 +80,7 @@ export const useAuthStore = defineStore('auth', () => {
       
       return true
     } catch (error: any) {
-      console.error('登录失败:', error)
+      authLogger.error(`Login failed for user: ${loginData.username}`, error)
       const message = error.response?.data?.detail || '登录失败'
       ElMessage.error(message)
       return false
@@ -88,12 +92,14 @@ export const useAuthStore = defineStore('auth', () => {
   // 登出
   const logout = async () => {
     try {
+      authLogger.info(`User logout initiated: ${userInfo.value?.username || 'unknown'}`)
       // 调用后端登出接口
       await request.post('/v1/auth/logout')
     } catch (error) {
-      console.error('登出接口调用失败:', error)
+      authLogger.error('Logout API call failed', error)
     } finally {
       clearTokens()
+      authLogger.info('User logged out and tokens cleared')
       ElMessage.success('已退出登录')
     }
   }
@@ -101,10 +107,12 @@ export const useAuthStore = defineStore('auth', () => {
   // 刷新token
   const refreshAccessToken = async (): Promise<boolean> => {
     if (!refreshToken.value) {
+      authLogger.warn('No refresh token available')
       return false
     }
 
     try {
+      authLogger.debug('Attempting to refresh access token')
       const response = await request.post<{access_token: string, token_type: string, expires_in: number}>(
         '/v1/auth/refresh',
         { refresh_token: refreshToken.value }
@@ -115,9 +123,10 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('access_token', response.data.access_token)
       request.defaults.headers.common['Authorization'] = `${response.data.token_type} ${response.data.access_token}`
       
+      authLogger.info('Access token refreshed successfully')
       return true
     } catch (error) {
-      console.error('刷新token失败:', error)
+      authLogger.error('Token refresh failed', error)
       // 刷新失败，清除所有token
       clearTokens()
       return false
@@ -127,15 +136,18 @@ export const useAuthStore = defineStore('auth', () => {
   // 获取用户信息
   const getUserInfo = async (): Promise<boolean> => {
     if (!accessToken.value) {
+      authLogger.warn('No access token available for user info')
       return false
     }
 
     try {
+      authLogger.debug('Fetching user information')
       const response = await request.post<UserInfo>('/v1/auth/verify')
       userInfo.value = response.data
+      authLogger.info(`User info retrieved: ${response.data.username}`)
       return true
     } catch (error) {
-      console.error('获取用户信息失败:', error)
+      authLogger.error('Failed to get user info', error)
       return false
     }
   }
@@ -143,18 +155,23 @@ export const useAuthStore = defineStore('auth', () => {
   // 初始化认证状态
   const initAuth = async () => {
     if (accessToken.value) {
+      authLogger.info('Initializing auth state from stored token')
       // 设置axios默认header
       request.defaults.headers.common['Authorization'] = `${tokenType.value} ${accessToken.value}`
       
       // 验证token有效性
       const isValid = await getUserInfo()
       if (!isValid) {
+        authLogger.warn('Stored token is invalid, attempting refresh')
         // token无效，尝试刷新
         const refreshed = await refreshAccessToken()
         if (!refreshed) {
+          authLogger.warn('Token refresh failed, clearing all tokens')
           clearTokens()
         }
       }
+    } else {
+      authLogger.debug('No stored token found')
     }
   }
 
