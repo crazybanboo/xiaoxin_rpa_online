@@ -8,6 +8,7 @@
 
 如果你在开发backend，请使用以下命令：
 
+先进入到backend目录下，然后执行以下命令：
 ```bash
 # 激活虚拟环境
 source .env/bin/activate

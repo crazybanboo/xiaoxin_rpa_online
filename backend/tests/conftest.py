@@ -9,43 +9,55 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.models.base import Base
-from app.core.database import get_db
+from app.api.deps import get_db
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, 
-    connect_args={"check_same_thread": False}
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
+import tempfile
+import uuid
 
 @pytest.fixture(scope="function")
 def db_session():
     """Create a database session for testing"""
+    # Create a unique temporary database file for each test
+    temp_db = tempfile.NamedTemporaryFile(delete=False, suffix=f"_{uuid.uuid4().hex[:8]}.db")
+    temp_db.close()
+    
+    database_url = f"sqlite:///{temp_db.name}"
+    
+    # Create engine and session for this test
+    engine = create_engine(database_url, connect_args={"check_same_thread": False})
     Base.metadata.create_all(bind=engine)
-    db = TestingSessionLocal()
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    session = SessionLocal()
     try:
-        yield db
+        yield session
     finally:
-        db.close()
-        Base.metadata.drop_all(bind=engine)
+        session.close()
+        engine.dispose()
+        # Clean up the temporary file
+        import os
+        try:
+            os.unlink(temp_db.name)
+        except OSError:
+            pass
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="function")  
 def client(db_session):
     """Create a test client"""
     def override_get_db():
         try:
             yield db_session
         finally:
-            pass  # Don't close the session here, let the db_session fixture handle it
+            pass
     
     app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as test_client:
-        yield test_client
-    app.dependency_overrides.clear()
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()
 
 
 @pytest.fixture

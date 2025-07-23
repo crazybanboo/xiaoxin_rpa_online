@@ -30,7 +30,6 @@ class TestAuthEndpoints:
         """创建测试管理员"""
         admin_create = AdminCreate(**test_admin_data)
         created_admin = admin.create_with_password(db_session, obj_in=admin_create)
-        # The CRUD method already commits, so we don't need to commit again
         return created_admin
 
     def test_login_success(self, client: TestClient, created_admin, test_admin_data):
@@ -89,8 +88,8 @@ class TestAuthEndpoints:
         
         assert response.status_code == 200
         verify_data = response.json()
-        assert verify_data["valid"] is True
-        assert verify_data["user_id"] == created_admin.id
+        assert verify_data["is_valid"] is True
+        assert verify_data["username"] == created_admin.username
 
     def test_token_verification_invalid(self, client: TestClient):
         """测试无效token验证"""
@@ -124,7 +123,8 @@ class TestAuthEndpoints:
         assert response.status_code == 200
         new_token_data = response.json()
         assert "access_token" in new_token_data
-        assert "refresh_token" in new_token_data
+        assert "token_type" in new_token_data
+        assert new_token_data["token_type"] == "bearer"
 
     def test_token_refresh_invalid(self, client: TestClient):
         """测试无效refresh token"""
