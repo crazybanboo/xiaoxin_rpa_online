@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.api_v1.endpoints import auth, admin, heartbeat
+from app.api.api_v1.endpoints import auth, admin, heartbeat, logs
 
 api_router = APIRouter()
 
@@ -11,6 +11,9 @@ api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
 
 # 心跳相关路由
 api_router.include_router(heartbeat.router, prefix="/client", tags=["heartbeat"])
+
+# 日志相关路由
+api_router.include_router(logs.router, prefix="/logs", tags=["logs"])
 
 
 @api_router.get("/")

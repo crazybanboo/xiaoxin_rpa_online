@@ -220,9 +220,20 @@ export class Logger {
   }
 
   /**
-   * 存储日志到本地存储
+   * 存储日志到本地存储和文件
    */
   private storeLog(entry: LogEntry) {
+    // 存储到localStorage
+    this.storeToLocalStorage(entry)
+    
+    // 存储到文件（通过API）
+    this.storeToFile(entry)
+  }
+
+  /**
+   * 存储日志到本地存储
+   */
+  private storeToLocalStorage(entry: LogEntry) {
     try {
       const stored = localStorage.getItem(Logger.storageKey)
       let logs: LogEntry[] = stored ? JSON.parse(stored) : []
@@ -240,8 +251,66 @@ export class Logger {
       localStorage.setItem(Logger.storageKey, JSON.stringify(logs))
     } catch (error) {
       // 如果存储失败，在控制台警告但不影响程序运行
-      console.warn('Failed to store log:', error)
+      console.warn('Failed to store log to localStorage:', error)
     }
+  }
+
+  /**
+   * 存储日志到文件（通过后端API）
+   */
+  private storeToFile(entry: LogEntry) {
+    try {
+      // 格式化日志条目为文本
+      const logLine = this.formatLogEntry(entry)
+      
+      // 发送到后端API保存到文件
+      fetch('/api/v1/logs/frontend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timestamp: entry.timestamp,
+          level: Logger.levelNames[entry.level],
+          logger: entry.logger,
+          message: entry.message,
+          data: entry.data,
+          stack: entry.stack,
+          url: entry.url,
+          userAgent: entry.userAgent,
+          logLine: logLine
+        })
+      }).catch(error => {
+        // 如果API调用失败，只在控制台显示警告，不影响程序运行
+        console.warn('Failed to save log to file:', error)
+      })
+    } catch (error) {
+      console.warn('Failed to format log for file storage:', error)
+    }
+  }
+
+  /**
+   * 格式化日志条目为文本格式
+   */
+  private formatLogEntry(entry: LogEntry): string {
+    const { timestamp, level, logger, message, data, stack } = entry
+    const levelName = Logger.levelNames[level]
+    
+    let logLine = `[${timestamp}] [${levelName}] ${logger}: ${message}`
+    
+    if (data !== undefined) {
+      try {
+        logLine += ` | Data: ${JSON.stringify(data)}`
+      } catch (error) {
+        logLine += ` | Data: [Circular or non-serializable object]`
+      }
+    }
+    
+    if (stack) {
+      logLine += `\n  Stack: ${stack}`
+    }
+    
+    return logLine
   }
 
   /**
