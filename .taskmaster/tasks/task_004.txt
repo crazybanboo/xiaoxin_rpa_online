@@ -1,6 +1,6 @@
 # Task ID: 4
 # Title: 客户端心跳监控系统
-# Status: pending
+# Status: done
 # Dependencies: 3
 # Priority: high
 # Description: 实现客户端心跳机制和状态监控功能，包括心跳接收、状态更新和实时通信
@@ -11,37 +11,43 @@
 模拟客户端发送心跳请求，验证状态更新机制，测试WebSocket实时通信功能
 
 # Subtasks:
-## 1. 心跳API接口开发 [pending]
+## 1. 心跳API接口开发 [done]
 ### Dependencies: None
 ### Description: 开发客户端心跳接收API接口，处理心跳数据验证和状态更新
 ### Details:
 实现/api/heartbeat POST接口，接收客户端ID、时间戳、状态信息等参数。验证客户端合法性，更新数据库中客户端的最后心跳时间和状态。设计心跳数据格式和响应结构。
+<info added on 2025-07-23T02:58:38.880Z>
+✅ 心跳API接口开发完成。已实现POST /api/client/heartbeat接口接收心跳数据和GET /api/client/heartbeat/status/{client_id}接口查询客户端状态。创建了HeartbeatRequest和HeartbeatResponse数据模型，集成客户端验证、状态更新、版本和IP地址管理功能。使用FastAPI路由系统，添加到主API路由器，所有现有测试通过。
+</info added on 2025-07-23T02:58:38.880Z>
 
-## 2. WebSocket实时通信实现 [pending]
+## 2. WebSocket实时通信实现 [done]
 ### Dependencies: None
 ### Description: 实现WebSocket服务器端，提供实时状态推送功能
 ### Details:
 使用FastAPI WebSocket支持创建WebSocket端点。实现连接管理、客户端状态变化事件推送。处理连接建立、断开、重连逻辑。设计实时消息格式和事件类型。
+<info added on 2025-07-23T03:18:43.222Z>
+WebSocket实时通信功能已完成开发和集成。创建了WebSocket管理器实现连接管理、主题订阅和消息广播功能。在心跳端点集成实时通知机制，新增WebSocket端点支持双向通信。定义了完整的消息类型和JSON格式规范。通过test_websocket.py测试脚本验证功能正常。实现了异步消息处理、连接生命周期管理和异常处理机制。现在系统支持客户端状态变化的实时推送。
+</info added on 2025-07-23T03:18:43.222Z>
 
-## 3. 后台监控任务开发 [pending]
+## 3. 后台监控任务开发 [done]
 ### Dependencies: 4.1
 ### Description: 创建后台定时任务，监控客户端在线状态并标记离线客户端
 ### Details:
 使用APScheduler或类似工具创建定时任务。检查客户端心跳超时情况，标记离线状态。触发WebSocket状态变化通知。配置监控间隔和超时阈值参数。
 
-## 4. 客户端状态管理 [pending]
+## 4. 客户端状态管理 [done]
 ### Dependencies: None
 ### Description: 实现前端客户端状态数据管理，使用Pinia进行状态存储
 ### Details:
 创建客户端状态Store，管理在线/离线状态列表。实现状态更新、筛选、排序功能。处理WebSocket消息接收和状态同步。设计状态数据结构和更新逻辑。
 
-## 5. 前端WebSocket集成 [pending]
+## 5. 前端WebSocket集成 [done]
 ### Dependencies: 4.2, 4.4
 ### Description: 在前端实现WebSocket连接管理，处理断线重连和消息处理
 ### Details:
 创建WebSocket连接类，处理连接建立和断开。实现自动重连机制和连接状态管理。解析服务器推送的状态变化消息，更新本地状态。处理连接异常和错误情况。
 
-## 6. 状态UI组件开发 [pending]
+## 6. 状态UI组件开发 [done]
 ### Dependencies: 4.4, 4.5
 ### Description: 开发客户端状态显示界面组件，实现实时状态展示功能
 ### Details:

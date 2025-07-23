@@ -1,5 +1,9 @@
 # Claude Code Instructions
 
+## 通用
+
+如果你是连接着ide的，请调用ide相关接口实时获得代码报错提示信息，并根据提示信息进行修改。
+
 ## Task Master AI Instructions
 **Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
 @./.taskmaster/CLAUDE.md

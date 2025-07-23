@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-here"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # Client Monitoring
+    HEARTBEAT_TIMEOUT_SECONDS: int = 60  # 客户端心跳超时时间（秒）
+    HEARTBEAT_CHECK_INTERVAL_SECONDS: int = 30  # 心跳检查间隔（秒）
 
     class Config:
         case_sensitive = True

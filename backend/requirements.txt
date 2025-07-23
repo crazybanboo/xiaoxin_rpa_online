@@ -38,3 +38,6 @@ python-multipart>=0.0.6
 
 # Redis (optional, for caching)
 redis>=5.0.0
+
+# Background tasks
+apscheduler>=3.10.0

@@ -68,6 +68,45 @@ case "${1:-all}" in
     "db-integration")
         run_test "db-integration" "python -m pytest tests/integration/test_database_integration.py -v" "Database Integration Tests"
         ;;
+    "heartbeat")
+        run_test "heartbeat" "python -m pytest tests/test_heartbeat.py -v" "Heartbeat Tests (Task 4)"
+        ;;
+    "monitoring")
+        run_test "monitoring" "python -m pytest tests/test_monitoring.py -v --tb=short" "Monitoring Tests (Task 4)"
+        ;;
+    "websocket")
+        run_test "websocket" "python -m pytest -k websocket -v" "WebSocket Tests (Task 4)"
+        ;;
+    "task4")
+        echo "Running Task 4 (Client Heartbeat Monitoring) tests..."
+        run_test "heartbeat" "python -m pytest tests/test_heartbeat.py -v" "Heartbeat API Tests"
+        heartbeat_result=$?
+        
+        if [ -f "tests/test_monitoring.py" ]; then
+            run_test "monitoring" "python -m pytest tests/test_monitoring.py -v --tb=short" "Monitoring Tests"
+            monitoring_result=$?
+        else
+            echo -e "${YELLOW}⚠️  Monitoring tests not found, skipping...${NC}"
+            monitoring_result=0
+        fi
+        
+        run_test "websocket_task4" "python -m pytest -k 'websocket or heartbeat' -v" "WebSocket & Heartbeat Integration"
+        websocket_result=$?
+        
+        # Task 4 Summary
+        echo -e "\n${YELLOW}=== Task 4 Test Summary ===${NC}"
+        [ $heartbeat_result -eq 0 ] && echo -e "${GREEN}✅ Heartbeat API Tests: PASSED${NC}" || echo -e "${RED}❌ Heartbeat API Tests: FAILED${NC}"
+        [ $monitoring_result -eq 0 ] && echo -e "${GREEN}✅ Monitoring Tests: PASSED${NC}" || echo -e "${RED}❌ Monitoring Tests: FAILED${NC}"
+        [ $websocket_result -eq 0 ] && echo -e "${GREEN}✅ WebSocket Tests: PASSED${NC}" || echo -e "${RED}❌ WebSocket Tests: FAILED${NC}"
+        
+        task4_total_failed=$((heartbeat_result + monitoring_result + websocket_result))
+        if [ $task4_total_failed -eq 0 ]; then
+            echo -e "\n${GREEN}🎉 Task 4 tests all passed!${NC}"
+        else
+            echo -e "\n${RED}💥 $task4_total_failed Task 4 test suite(s) failed${NC}"
+            exit 1
+        fi
+        ;;
     "coverage")
         run_test "coverage" "python -m pytest --cov=app --cov-report=html --cov-report=term-missing" "Coverage Tests"
         ;;
@@ -93,6 +132,10 @@ case "${1:-all}" in
         run_test "auth_unit" "python -m pytest tests/unit/test_auth.py -v" "Auth Unit Tests"
         auth_unit_result=$?
         
+        # Task 4 Specific Tests
+        run_test "heartbeat_all" "python -m pytest tests/test_heartbeat.py -v" "Heartbeat Tests"
+        heartbeat_result=$?
+        
         # Integration Tests
         run_test "api_integration" "python -m pytest tests/integration/test_api_integration.py -v" "API Integration Tests"
         api_integration_result=$?
@@ -112,12 +155,15 @@ case "${1:-all}" in
         [ $schema_result -eq 0 ] && echo -e "${GREEN}✅ Schema Tests: PASSED${NC}" || echo -e "${RED}❌ Schema Tests: FAILED${NC}"
         [ $auth_unit_result -eq 0 ] && echo -e "${GREEN}✅ Auth Unit Tests: PASSED${NC}" || echo -e "${RED}❌ Auth Unit Tests: FAILED${NC}"
         
+        echo -e "${YELLOW}Task 4 Tests:${NC}"
+        [ $heartbeat_result -eq 0 ] && echo -e "${GREEN}✅ Heartbeat Tests: PASSED${NC}" || echo -e "${RED}❌ Heartbeat Tests: FAILED${NC}"
+        
         echo -e "${YELLOW}Integration Tests:${NC}"
         [ $api_integration_result -eq 0 ] && echo -e "${GREEN}✅ API Integration Tests: PASSED${NC}" || echo -e "${RED}❌ API Integration Tests: FAILED${NC}"
         [ $auth_integration_result -eq 0 ] && echo -e "${GREEN}✅ Auth Integration Tests: PASSED${NC}" || echo -e "${RED}❌ Auth Integration Tests: FAILED${NC}"
         [ $db_integration_result -eq 0 ] && echo -e "${GREEN}✅ Database Integration Tests: PASSED${NC}" || echo -e "${RED}❌ Database Integration Tests: FAILED${NC}"
         
-        total_failed=$((model_result + crud_result + api_unit_result + schema_result + auth_unit_result + api_integration_result + auth_integration_result + db_integration_result))
+        total_failed=$((model_result + crud_result + api_unit_result + schema_result + auth_unit_result + heartbeat_result + api_integration_result + auth_integration_result + db_integration_result))
         if [ $total_failed -eq 0 ]; then
             echo -e "\n${GREEN}🎉 All tests passed!${NC}"
         else
@@ -144,6 +190,12 @@ case "${1:-all}" in
         echo "  api-integration   - Run API integration tests only"
         echo "  auth-integration  - Run auth integration tests only"
         echo "  db-integration    - Run database integration tests only"
+        echo ""
+        echo "Task 4 Specific Options:"
+        echo "  task4             - Run all Task 4 (Heartbeat Monitoring) tests"
+        echo "  heartbeat         - Run heartbeat API tests only"
+        echo "  monitoring        - Run monitoring tests only"
+        echo "  websocket         - Run WebSocket related tests only"
         echo ""
         echo "Other Options:"
         echo "  coverage          - Run tests with coverage report"

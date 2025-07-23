@@ -3,32 +3,15 @@ from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
 import json
 
 from app.api import deps
 from app.crud import crud_client
 from app.schemas.client import Client
+from app.schemas.heartbeat import HeartbeatRequest, HeartbeatResponse
 from app.core.websocket_manager import websocket_manager, MessageType
 
 router = APIRouter()
-
-
-class HeartbeatRequest(BaseModel):
-    """心跳请求schema"""
-    client_id: int = Field(..., description="客户端ID")
-    timestamp: datetime = Field(..., description="客户端时间戳")
-    status: str = Field("online", description="客户端状态")
-    version: str = Field("", description="客户端版本")
-    ip_address: str = Field("", description="客户端IP地址")
-
-
-class HeartbeatResponse(BaseModel):
-    """心跳响应schema"""
-    success: bool
-    message: str
-    timestamp: datetime
-    client_status: str
 
 
 @router.post("/heartbeat", response_model=HeartbeatResponse)
@@ -49,7 +32,7 @@ async def receive_heartbeat(
     if not client:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="客户端不存在"
+            detail="Client not found"
         )
     
     # 更新客户端信息
@@ -93,7 +76,7 @@ async def receive_heartbeat(
     
     return HeartbeatResponse(
         success=True,
-        message="心跳接收成功",
+        message="Heartbeat received successfully",
         timestamp=datetime.utcnow(),
         client_status=updated_client.status
     )
@@ -111,7 +94,7 @@ def get_client_status(
     if not client:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="客户端不存在"
+            detail="Client not found"
         )
     return client
 

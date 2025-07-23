@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.api_v1.api import api_router
 from app.core.config import settings
 from app.core.middleware import JWTAuthMiddleware
+# from app.services.monitoring import monitoring_service  # Temporarily disabled until APScheduler is installed
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -26,6 +27,22 @@ if settings.BACKEND_CORS_ORIGINS:
 # app.add_middleware(JWTAuthMiddleware)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+
+@app.on_event("startup")
+async def startup_event():
+    """应用启动时的事件处理"""
+    # 启动客户端监控服务
+    # monitoring_service.start()  # Temporarily disabled until APScheduler is installed
+    pass
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """应用关闭时的事件处理"""
+    # 停止客户端监控服务
+    # monitoring_service.stop()  # Temporarily disabled until APScheduler is installed
+    pass
 
 
 @app.get("/")

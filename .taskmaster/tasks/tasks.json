@@ -211,7 +211,7 @@
         "dependencies": [
           3
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -239,7 +239,7 @@
               "4.1"
             ],
             "details": "使用APScheduler或类似工具创建定时任务。检查客户端心跳超时情况，标记离线状态。触发WebSocket状态变化通知。配置监控间隔和超时阈值参数。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -248,7 +248,7 @@
             "description": "实现前端客户端状态数据管理，使用Pinia进行状态存储",
             "dependencies": [],
             "details": "创建客户端状态Store，管理在线/离线状态列表。实现状态更新、筛选、排序功能。处理WebSocket消息接收和状态同步。设计状态数据结构和更新逻辑。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -260,7 +260,7 @@
               "4.4"
             ],
             "details": "创建WebSocket连接类，处理连接建立和断开。实现自动重连机制和连接状态管理。解析服务器推送的状态变化消息，更新本地状态。处理连接异常和错误情况。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -272,7 +272,7 @@
               "4.5"
             ],
             "details": "使用Element Plus创建客户端状态列表组件。显示客户端ID、在线状态、最后心跳时间等信息。实现状态筛选（在线/离线/全部）和搜索功能。添加状态指示器和实时更新动画效果。",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -702,7 +702,7 @@
     ],
     "metadata": {
       "created": "2025-07-21T15:07:28.400Z",
-      "updated": "2025-07-23T03:18:50.076Z",
+      "updated": "2025-07-23T06:41:35.019Z",
       "description": "Tasks for master context"
     }
   }

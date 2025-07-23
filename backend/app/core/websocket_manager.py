@@ -232,12 +232,37 @@ class WebSocketManager:
         """获取连接信息"""
         return {
             "total_connections": len(self.active_connections),
+            "active_connections": len(self.connection_map),
             "connection_ids": list(self.connection_map.keys()),
             "subscriptions": {
                 conn_id: list(topics) 
                 for conn_id, topics in self.subscriptions.items()
             }
         }
+    
+    # 测试辅助方法
+    def connect_sync(self, websocket) -> str:
+        """同步版本的连接方法，用于测试"""
+        connection_id = f"test_conn_{len(self.active_connections)}_{datetime.utcnow().timestamp()}"
+        self.active_connections.append(websocket)
+        self.connection_map[connection_id] = websocket
+        self.subscriptions[connection_id] = set()
+        return connection_id
+    
+    def subscribe_sync(self, connection_id: str, topics: List[str]):
+        """同步版本的订阅方法，用于测试"""
+        if connection_id in self.subscriptions:
+            self.subscriptions[connection_id].update(topics)
+    
+    @property
+    def _connections(self):
+        """获取连接映射，用于测试"""
+        return self.connection_map
+    
+    @property  
+    def _subscriptions(self):
+        """获取订阅映射，用于测试"""
+        return self.subscriptions
 
 
 # 全局WebSocket管理器实例
