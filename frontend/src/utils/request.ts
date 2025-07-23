@@ -59,7 +59,7 @@ service.interceptors.response.use(
     
     // 对响应数据做点什么
     const res = response.data
-    return res
+    return res.data || res
   },
   async (error: AxiosError) => {
     // 计算响应时间

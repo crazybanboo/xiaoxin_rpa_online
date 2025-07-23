@@ -71,7 +71,9 @@ export const useAuthStore = defineStore('auth', () => {
       
       const response = await request.post<TokenResponse>('/v1/auth/login', loginData)
       
-      setTokens(response.data)
+      console.log('Response structure:', response)
+      console.log('Response.data:', response.data)
+      setTokens(response)
       authLogger.info(`Login successful for user: ${loginData.username}`)
       ElMessage.success('登录成功')
       
